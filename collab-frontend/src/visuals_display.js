@@ -76,7 +76,7 @@
 					this._cellLife = cellLife;	
 					this._edges = { topRow: [], rightRow: [], bottomRow: [], leftRow: [] };	
 					this._cellsMatrix = Array(this.gridDimension ** 2);	
-					this._materials = Array(this.gridDimension ** 2);	
+					//this._materials = Array(this.gridDimension ** 2);	
 					this._lumCutoff = 0.5; //Minimum luminance to be counted as a neighbor 
 
 					//Init the matrix (how do you return an object in a map)
