@@ -4,7 +4,7 @@ class User < ApplicationRecord
     has_many :seeds   
     
     validates :username, presence: true  
-    validates :username, length: { in: 6..50 }     
-    validates :password, presence: true    
+    validates :username, length: { in: 4..50 }     
+    #validates :password, presence: true    
     validates :password, length: { in: 6..50 }    
 end
