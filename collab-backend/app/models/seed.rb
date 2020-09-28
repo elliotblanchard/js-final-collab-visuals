@@ -1,6 +1,4 @@
 class Seed < ApplicationRecord
-    has_secure_password
-
     belongs_to :user   
     
     validates :name, presence: true  
