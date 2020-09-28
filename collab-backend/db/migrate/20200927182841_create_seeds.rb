@@ -3,7 +3,7 @@ class CreateSeeds < ActiveRecord::Migration[6.0]
     create_table :seeds do |t|
       t.string :name
       t.string :matrix
-      t.belongs_to :user, null: false, foreign_key: true
+      t.belongs_to :user, foreign_key: true
 
       t.timestamps      
     end

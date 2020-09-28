@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 2020_09_27_182841) do
   create_table "seeds", force: :cascade do |t|
     t.string "name"
     t.string "matrix"
-    t.bigint "user_id", null: false
+    t.bigint "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_seeds_on_user_id"
