@@ -1,5 +1,13 @@
 class ApplicationController < ActionController::API
-    def test
-        render json: { test: "success" }
+    def encode_token(payload)
+        JWT.encode(payload,ENV['JWT_KEY'])
+    end
+
+    def auth_header
+        request.headers['Authorization']
+    end
+
+    def decoded_token
+
     end
 end
