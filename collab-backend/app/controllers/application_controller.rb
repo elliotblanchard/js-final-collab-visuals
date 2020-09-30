@@ -31,7 +31,7 @@ class ApplicationController < ActionController::API
         end
     end
 
-    def logged_id?
+    def logged_in?
         !!current_user
         #returns boolean instead of truthy user object
     end
