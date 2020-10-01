@@ -36,7 +36,7 @@ function logoutFormHandler(e) {
   e.preventDefault()
   localStorage.removeItem('jwt_token') //to logout, everything handled on the frontend
   console.log("Logging out")
-  renderUserProfile()
+  renderToken()
 }
 
 function createFetch(username, password, admin) {
@@ -51,7 +51,7 @@ function createFetch(username, password, admin) {
   .then(json => {
     localStorage.setItem('jwt_token', json.jwt)
     //incorporate browser cookie as stretch goal - one in cookie, one in local storage - more secure
-    renderUserProfile()
+    renderToken()
   })
 }
   
@@ -68,20 +68,18 @@ function loginFetch(username, password) {
       localStorage.setItem('jwt_token', json.jwt)
       //localStorage.removeItem('jwt_token') //to logout, all handled on the frontend
       //incorporate browser cookie as stretch goal - one in cookie, one in local storage - more secure
+      renderToken()
       renderUserProfile()
     })
 }
 
 
-function renderUserProfile() {
+function renderToken() {
     console.log(localStorage.getItem('jwt_token'));
   }
 
 
-//More built out request (this route does not exist yet)
-/*
 function renderUserProfile() {
-    console.log(localStorage.getItem('jwt_token'));
     fetch('http://localhost:3000/api/v1/profile', {
       method: 'GET',
       headers: {
@@ -90,7 +88,7 @@ function renderUserProfile() {
     })
     .then(response => response.json())
     .then(json => {
+      //console.log(json)
       alert(`Welcome back ${json.user.data.attributes.username}`)
     })
 }
-*/
