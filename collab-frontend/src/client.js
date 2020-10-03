@@ -58,8 +58,13 @@ function buildPage() {
     const loginDiv = document.createElement("div")
     loginDiv.setAttribute("id", "login")
     const loginHeader = document.createElement("p")
-    loginHeader.textContent = "Please login or create an account"
+    loginHeader.textContent = "Please login or "
     loginDiv.appendChild(loginHeader)  
+    const createLink = document.createElement("a")
+    createLink.setAttribute("id", "createLink")
+    createLink.setAttribute("href", "#")
+    createLink.text = "create an account."
+    loginHeader.appendChild(createLink)
     const usernameLabel = document.createElement("p") 
     usernameLabel.textContent = "Username" 
     loginDiv.appendChild(usernameLabel) 
@@ -74,30 +79,50 @@ function buildPage() {
     password.setAttribute("type", "password")
     password.setAttribute("id", "passwordField")
     loginDiv.appendChild(password)
+    main[0].appendChild(loginDiv)
+
+    const loginButtonsDiv = document.createElement("div")
+    loginButtonsDiv.setAttribute("id", "loginButtons")
     const loginButton = document.createElement("button")
     loginButton.setAttribute("id", "loginBtn")
     loginButton.textContent = "Login"
-    loginDiv.appendChild(loginButton)
-    const signupButton = document.createElement("button")
-    signupButton.setAttribute("id", "signupBtn")
-    signupButton.textContent = "Signup"
-    loginDiv.appendChild(signupButton)
-    main[0].appendChild(loginDiv)
+    loginButtonsDiv.appendChild(loginButton)
+    main[0].appendChild(loginButtonsDiv)
 
     //Add event listeners
+    createLink.addEventListener("click", (e) => loginFormHandler(e))
     loginButton.addEventListener("click", (e) => loginFormHandler(e))
-    signupButton.addEventListener("click", (e) => loginFormHandler(e))
   }
 
 }
 
 function loginFormHandler(e) {
+  //console.log(e.path[0].id)
   if (e.path[0].id == "logoutBtn") {
     localStorage.removeItem('jwt_token') //to logout, everything handled on the frontend
     console.log("Logging out")
     buildPage()
   }
+  else if (e.path[0].id == "createLink") {
+    //Swap to create an account form
+    const loginDiv = document.getElementById("login")
+
+    const adminHeader = document.createElement("p")
+    adminHeader.textContent = "Admin?" 
+
+    const adminCheck = document.createElement("INPUT")
+    adminCheck.setAttribute("type", "checkbox")
+    adminCheck.setAttribute("id", "adminField")
+
+    adminHeader.appendChild(adminCheck)
+    loginDiv.appendChild(adminHeader)    
+
+    const loginButton = document.getElementById("loginBtn")
+    loginButton.textContent = "Create Account"
+
+  }
   else {
+    e.path[0].textContent
     //Check input fields
     let errorMsg = ""
     const usernameInput = document.getElementById("usernameField").value
@@ -114,22 +139,16 @@ function loginFormHandler(e) {
     }
     else {
       //Submit to backend
-      if (e.path[0].id == "loginBtn") {
+      if (e.path[0].textContent == "Login") {
         loginFetch(usernameInput, pwInput)
       }
       else {
-
+        const adminInput = document.getElementById("adminField").checked
+        createFetch(usernameInput, pwInput, adminInput)
       }
     }
     
   }
-
-  //Need to check that the fields are requred lengths / filled out
-  console.log(e.path[0].id)
-  //e.preventDefault()
-  //const usernameInput = e.target.querySelector("#login-username").value
-  //const pwInput = e.target.querySelector("#login-password").value
-  //loginFetch(usernameInput, pwInput)
 }
 
 function clearMain() {   
@@ -149,7 +168,6 @@ function loginFetch(username, password) {
     localStorage.setItem('jwt_token', json.jwt)
     renderToken()
     buildPage()
-    //userProfileFetch()
   })
 }
 
@@ -166,6 +184,7 @@ function createFetch(username, password, admin) {
     localStorage.setItem('jwt_token', json.jwt)
     //incorporate browser cookie as stretch goal - one in cookie, one in local storage - more secure
     renderToken()
+    buildPage()
   })
 }
 
@@ -178,6 +197,7 @@ function userProfileFetch() {
   })
   .then(response => response.json())
   .then(json => {
+    console.log(json)
     const userDiv = document.createElement("div")
     userDiv.setAttribute("id", "user")
     const userHeader = document.createElement("p")
