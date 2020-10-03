@@ -5,27 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM is Loaded")
     buildPage()
 
-    /*
-    if (localStorage.getItem('jwt_token') != undefined) {
-      //Already logged in
-      userProfileFetch()
-      //Should also reveal logout button
-    }
-    else {
-      const userInfo = document.querySelector("#userInfo-container")
-      userInfo.innerHTML = "<h1>Please sign up or login</h1>"
-      //Should also reveal signup / signin form
-    }
-  
-    const createForm = document.querySelector("#create-form")
-    createForm.addEventListener("submit", (e) => createFormHandler(e))
-
-    const loginForm = document.querySelector("#login-form")
-    loginForm.addEventListener("submit", (e) => loginFormHandler(e))
- 
-    const logoutButton = document.querySelector("#logoutBtn")  
-    logoutButton.addEventListener("click", (e) => logoutFormHandler(e))
-    */
   })
 
 function buildPage() {
@@ -38,8 +17,6 @@ function buildPage() {
     //Greet user
     userProfileFetch()
 
-    //Build form to submit new seeds
-
     //Add logout button
     const loginDiv = document.createElement("div")
     loginDiv.setAttribute("id", "login")
@@ -49,8 +26,42 @@ function buildPage() {
     loginDiv.appendChild(logoutButton)
     main[0].appendChild(loginDiv)
 
+    //Build form to submit new seeds
+    const seedsDiv = document.createElement("div")
+    seedsDiv.setAttribute("id", "seeds")
+
+    const seedHeader = document.createElement("h2") 
+    seedHeader.textContent = "Create a new seed" 
+    seedsDiv.appendChild(seedHeader)
+
+    const nameLabel = document.createElement("p") 
+    nameLabel.textContent = "Name" 
+    seedsDiv.appendChild(nameLabel) 
+    const name = document.createElement("INPUT")
+    name.setAttribute("type", "text")
+    name.setAttribute("id", "nameField")
+    seedsDiv.appendChild(name)   
+    
+    const matrixLabel = document.createElement("p") 
+    matrixLabel.textContent = "Matrix" 
+    seedsDiv.appendChild(matrixLabel) 
+    const matrix = document.createElement("INPUT")
+    matrix.setAttribute("type", "text")
+    matrix.setAttribute("id", "matrixField")
+    seedsDiv.appendChild(matrix)     
+
+    const seedSubmitButton = document.createElement("button")
+    seedSubmitButton.setAttribute("id", "seedSubmitBtn")
+    seedSubmitButton.textContent = "Submit"
+    seedsDiv.appendChild(seedSubmitButton)    
+
+
+    main[0].appendChild(seedsDiv)
+
     //Add event listeners
     logoutButton.addEventListener("click", (e) => loginFormHandler(e))    
+    seedSubmitButton.addEventListener("click", (e) => seedFormHandler(e))
+
   }
   else {
     //Need to login / create account
@@ -122,7 +133,7 @@ function loginFormHandler(e) {
 
   }
   else {
-    e.path[0].textContent
+    //e.path[0].textContent
     //Check input fields
     let errorMsg = ""
     const usernameInput = document.getElementById("usernameField").value
@@ -144,11 +155,33 @@ function loginFormHandler(e) {
       }
       else {
         const adminInput = document.getElementById("adminField").checked
-        createFetch(usernameInput, pwInput, adminInput)
+        createUserFetch(usernameInput, pwInput, adminInput)
       }
     }
     
   }
+}
+
+function seedFormHandler(e) {
+  let errorMsg = ""
+  const nameInput = document.getElementById("nameField").value
+  const matrixInput = document.getElementById("matrixField").value
+
+  if ( (nameInput.length < 6) || (matrixInput.length != 16) ) {
+    if (nameInput.length < 6) {
+      errorMsg += "Name must be at least 6 characters long."
+    }
+    if (matrixInput.length != 16) {
+      errorMsg += "Martix must be exactly 16 length."
+    }
+    window.alert(errorMsg)
+  }
+  else {
+    //Submit to backend
+    console.log("submitting")
+    //createUserFetch(usernameInput, pwInput, adminInput)
+  }
+
 }
 
 function clearMain() {   
@@ -171,7 +204,7 @@ function loginFetch(username, password) {
   })
 }
 
-function createFetch(username, password, admin) {
+function createUserFetch(username, password, admin) {
   const bodyData = {user: { username, password, admin} }
 
   fetch(endPoint+"users", {
@@ -199,92 +232,15 @@ function userProfileFetch() {
   .then(json => {
     console.log(json)
     const userDiv = document.createElement("div")
+    const seedsDiv = document.getElementById("seeds")
+
     userDiv.setAttribute("id", "user")
-    const userHeader = document.createElement("p")
+    const userHeader = document.createElement("h1")
     userHeader.textContent = `Welcome back ${json.user.data.attributes.username}`
     userDiv.appendChild(userHeader) 
-    main[0].appendChild(userDiv)    
+    main[0].insertBefore(userDiv,seedsDiv)    
   })
 }
-
-/*
-function createFormHandler(e) {
-    e.preventDefault()
-    const usernameInput = e.target.querySelector("#create-username").value
-    const pwInput = e.target.querySelector("#create-password").value
-    const adminInput = e.target.querySelector("#create-admin")
-    //console.log(adminInput.checked)
-    createFetch(usernameInput, pwInput, adminInput.checked)
-}
-
-function loginFormHandler(e) {
-    //Need to check that the fields are requred lengths / filled out
-    e.preventDefault()
-    const usernameInput = e.target.querySelector("#login-username").value
-    const pwInput = e.target.querySelector("#login-password").value
-    loginFetch(usernameInput, pwInput)
-}
-
-function logoutFormHandler(e) {
-  e.preventDefault()
-  localStorage.removeItem('jwt_token') //to logout, everything handled on the frontend
-  console.log("Logging out")
-  const userInfo = document.querySelector("#userInfo-container")
-  userInfo.innerHTML = "<h1>Please sign up or login</h1>"
-  renderToken()
-}
-
-function createFetch(username, password, admin) {
-  const bodyData = {user: { username, password, admin} }
-
-  fetch(endPoint+"users", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify(bodyData)
-  })
-  .then(response => response.json())
-  .then(json => {
-    localStorage.setItem('jwt_token', json.jwt)
-    //incorporate browser cookie as stretch goal - one in cookie, one in local storage - more secure
-    renderToken()
-  })
-}
-  
-function loginFetch(username, password) {
-    const bodyData = {user: { username, password} }
-  
-    fetch(endPoint+"login", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(bodyData)
-    })
-    .then(response => response.json())
-    .then(json => {
-      localStorage.setItem('jwt_token', json.jwt)
-      //incorporate browser cookie as stretch goal - one in cookie, one in local storage - more secure
-      renderToken()
-      userProfileFetch()
-    })
-}
-
-function userProfileFetch() {
-  fetch(endPoint+"profile", {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
-    }
-  })
-  .then(response => response.json())
-  .then(json => {
-    console.log(json)
-    const userMarkup = `
-      <h1>Welcome back ${json.user.data.attributes.username}</h1>
-    `
-    const userInfo = document.querySelector("#userInfo-container")
-    userInfo.innerHTML = userMarkup
-  })
-}
-*/
 
 function renderToken() {
     console.log(localStorage.getItem('jwt_token'))
