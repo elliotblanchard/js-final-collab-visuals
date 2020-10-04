@@ -184,6 +184,10 @@ function seedFormHandler(e) {
 
 }
 
+function seedQueueHandler(e) {
+  console.log("Queue seeds...")
+}
+
 function clearMain() {   
   main[0].innerHTML = ""
 } 
@@ -249,9 +253,31 @@ function userProfileFetch() {
   })
   .then(response => response.json())
   .then(json => {
-    console.log(json.user.data.attributes.seeds[0].name)
+    console.log(json.user.data.attributes.seeds[0].id)
     const userDiv = document.createElement("div")
     const seedsDiv = document.getElementById("seeds")
+
+    const seedExistingHeader = document.createElement("h2") 
+    seedExistingHeader.textContent = "Send seeds to the main screen" 
+    seedsDiv.appendChild(seedExistingHeader)
+    for (let i = 0; i < json.user.data.attributes.seeds.length; i++) {
+      const seedItem = document.createElement("p")
+      seedItem.textContent = `${json.user.data.attributes.seeds[i].name} (${json.user.data.attributes.seeds[i].matrix})`       
+      const seedCheck = document.createElement("INPUT")
+      seedCheck.setAttribute("type", "checkbox")
+      seedCheck.setAttribute("class", "seed_id")
+      seedCheck.setAttribute("id", json.user.data.attributes.seeds[i].id)
+      seedItem.appendChild(seedCheck)
+      seedsDiv.appendChild(seedItem)
+    }
+
+    const seedQueueButton = document.createElement("button")
+    seedQueueButton.setAttribute("id", "seedQueueBtn")
+    seedQueueButton.textContent = "Queue"
+    seedsDiv.appendChild(seedQueueButton)    
+
+    //Add event listener   
+    seedQueueButton.addEventListener("click", (e) => seedQueueHandler(e))
 
     userDiv.setAttribute("id", "user")
     userDiv.setAttribute("data-user-id", json.user.data.id);
