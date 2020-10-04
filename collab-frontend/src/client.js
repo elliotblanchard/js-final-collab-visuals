@@ -14,7 +14,7 @@ function buildPage() {
     //Already logged in
     console.log("Logged in")
 
-    //Greet user
+    //Greet user, show their seeds
     userProfileFetch()
 
     //Add logout button
@@ -179,7 +179,7 @@ function seedFormHandler(e) {
   else {
     //Submit to backend
     console.log("submitting")
-    //createUserFetch(usernameInput, pwInput, adminInput)
+    createSeedFetch(nameInput, matrixInput)
   }
 
 }
@@ -221,6 +221,25 @@ function createUserFetch(username, password, admin) {
   })
 }
 
+function createSeedFetch(name, matrix) {
+  const userInfo = document.getElementById("user")
+  const user_id = userInfo.getAttribute("data-user-id")
+  const bodyData = {seed: { name, matrix, user_id } }
+
+  fetch(endPoint+"seeds", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+    },
+    body: JSON.stringify(bodyData)
+  })
+  .then(response => response.json())
+  .then(json => {
+    buildPage()
+  })
+}
+
 function userProfileFetch() {
   fetch(endPoint+"profile", {
     method: 'GET',
@@ -230,11 +249,12 @@ function userProfileFetch() {
   })
   .then(response => response.json())
   .then(json => {
-    console.log(json)
+    console.log(json.user.data.attributes.seeds[0].name)
     const userDiv = document.createElement("div")
     const seedsDiv = document.getElementById("seeds")
 
     userDiv.setAttribute("id", "user")
+    userDiv.setAttribute("data-user-id", json.user.data.id);
     const userHeader = document.createElement("h1")
     userHeader.textContent = `Welcome back ${json.user.data.attributes.username}`
     userDiv.appendChild(userHeader) 

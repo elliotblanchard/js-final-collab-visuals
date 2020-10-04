@@ -1,6 +1,6 @@
 class Api::V1::SeedsController < ApplicationController
-
     def create
+        # Need to add a check that the submitted user_id in params is the same as the logged in user_id
         seed = Seed.create(seed_params)
         if seed.valid?
             render json: { seed: SeedSerializer.new(seed) }, status: :created
