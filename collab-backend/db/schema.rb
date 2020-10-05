@@ -10,10 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_27_182841) do
+ActiveRecord::Schema.define(version: 2020_10_05_125217) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "playlists", force: :cascade do |t|
+    t.bigint "seed_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["seed_id"], name: "index_playlists_on_seed_id"
+  end
 
   create_table "seeds", force: :cascade do |t|
     t.string "name"
@@ -32,5 +39,6 @@ ActiveRecord::Schema.define(version: 2020_09_27_182841) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "playlists", "seeds"
   add_foreign_key "seeds", "users"
 end
