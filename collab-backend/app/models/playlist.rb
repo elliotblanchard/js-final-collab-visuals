@@ -1,7 +1,7 @@
 class Playlist < ApplicationRecord
     belongs_to :seed   
           
-    @@now_playing
+    @@now_playing = nil
 
     def now_playing
         @@now_playing
@@ -10,4 +10,9 @@ class Playlist < ApplicationRecord
     def now_playing=(id) 
         @@now_playing = id 
     end    
+
+    #playlist = Playlist.new()
+    #playlist.now_playing
+    #playlist.now_playing = 10
+
 end
