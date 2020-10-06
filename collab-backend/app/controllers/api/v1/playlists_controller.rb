@@ -1,4 +1,6 @@
 class Api::V1::PlaylistsController < ApplicationController
+    skip_before_action :authorized, only: [:index, :destroy] # main screen needs login implemented
+
     def index
         playlists = Playlist.all      
         render json: { playlist: PlaylistSerializer.new(playlists) }, status: :accepted

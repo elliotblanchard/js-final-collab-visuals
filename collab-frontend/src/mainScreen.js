@@ -68,6 +68,42 @@
  				}				 		 			 			  		  			  
 			}
 
+			
+			class Seed {
+				constructor(id, name, matrix, userId) {
+					this._id = id
+    				this._name = name
+					this._matrix = matrix
+					this._userId = userId
+  				}	
+
+				get id() {
+    				return this._id
+  				}				  
+				get name() {
+    				return this._name
+  				}
+				get matrix() {
+    				return this._matrix
+  				}	
+				get user_id() {
+    				return this._user_id
+  				}				  			  
+				set id(newId) {
+    				this._id = newId
+ 				}					 	
+				set name(newName) {
+    				this._name = newName
+ 				}	
+				set matrix(newMatrix) {
+    				this._matrix = newMatrix
+ 				}	
+				set userId(newUserId) {
+    				this._userId = newUserId
+ 				}			 					 		 			 			  		  			  
+			}			
+
+			//Define overall class for the cells matrix
 			class CellEcosystem {
 				constructor(gridDimension,cellDimension,cellDepth,cellLife) {
 					this._gridDimension = gridDimension;
@@ -76,7 +112,7 @@
 					this._cellLife = cellLife;	
 					this._edges = { topRow: [], rightRow: [], bottomRow: [], leftRow: [] };	
 					this._cellsMatrix = Array(this.gridDimension ** 2);	
-					//this._materials = Array(this.gridDimension ** 2);	
+					this._currentSeed;	
 					this._lumCutoff = 0.5; //Minimum luminance to be counted as a neighbor 
 
 					//Init the matrix (how do you return an object in a map)
@@ -142,6 +178,11 @@
 							this._cellsMatrix[i].material.emissive.setHSL(this._cellsMatrix[i].hue, this._cellsMatrix[i].sat, this._cellsMatrix[i].lum)
 						}
 					}
+				}
+
+				setSeed(seed) {
+					this._currentSeed = seed
+					console.log(this._currentSeed)
 				}
 
 				/*
@@ -375,10 +416,11 @@
 				*/
 
 				// Grid
-
+				/*
 				var helper = new THREE.GridHelper( 1000, 75, 0x101010, 0x101010 );
 				helper.position.y = - 75;
 				scene.add( helper );
+				*/
 
 				// Lights
 				scene.add( new THREE.AmbientLight( 0x111111 ) );
@@ -510,8 +552,9 @@
 			});	
 
 			//Timed actions
-			let pulseVar = setInterval(bpmPulse, 750);	
-			let ageVar = setInterval(ageInt, 42); //Roughly 24 FPS
+			let pulseVar = setInterval(bpmPulse, 750); //Interval to add seed	
+			let ageVar = setInterval(ageInt, 42); //Interval to age ceels - roughly 24 FPS
+			let playlistVar = setInterval(playlistFetch, 10000); //Interval to fetch new seed
 
 			function bpmPulse() {
 				CellEcosystem.cellEcosystem.randomColor(0.75);
@@ -519,7 +562,57 @@
 
 			function ageInt() {
 				CellEcosystem.cellEcosystem.ageCells();
-			}				
+			}	
+			
+			function playlistFetch() {
+
+				const endPoint = "http://localhost:3000/api/v1/"		
+				
+				fetch(endPoint+"playlists", {
+					method: 'GET',
+					//headers: {
+					//  Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+					//}
+				  })
+				  .then(response => response.json())
+				  .then(json => {
+					//Put first seed info into cell ecosystem's current seed var
+					let newSeed = new Seed(
+						json.playlist.data[0].attributes.seed.id, 
+						json.playlist.data[0].attributes.seed.name, 
+						json.playlist.data[0].attributes.seed.matrix, 
+						json.playlist.data[0].attributes.seed.user_id
+						)
+					CellEcosystem.cellEcosystem.setSeed(newSeed)
+
+					//Set playlist.now_playing = seed_id (needs new route)
+
+					//Destroy seed from playlist					
+				  })				
+
+				/*
+				const bodyData = {playlist: { seed_id } }
+			  
+				fetch(endPoint+"playlists", {
+				  method: "POST",
+				  headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+				  },
+				  body: JSON.stringify(bodyData)
+				})
+				.then(response => response.json())
+				.then(json => {
+				  window.alert("Seed added to playlist")
+				  //Clear checkboxes
+				  const seedQueueCheckboxes = document.getElementsByClassName("seed_id")
+			  
+				  for (let i = 0; i < seedQueueCheckboxes.length; i++) {
+					seedQueueCheckboxes[i].checked = false
+				  }
+				})
+				*/ 
+			}
 
 			
 			
