@@ -585,9 +585,8 @@
 						)
 					CellEcosystem.cellEcosystem.setSeed(newSeed)
 
-					//Set playlist.now_playing = seed_id (needs new route)
-
-					//Destroy seed from playlist					
+					//Set playlist.now_playing = seed_id (needs new route) (also destroys seed from playlist)
+					
 				  })				
 
 				/*

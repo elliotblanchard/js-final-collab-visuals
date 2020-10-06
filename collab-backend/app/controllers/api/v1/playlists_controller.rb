@@ -1,5 +1,5 @@
 class Api::V1::PlaylistsController < ApplicationController
-    skip_before_action :authorized, only: [:index, :destroy] # main screen needs login implemented
+    skip_before_action :authorized, only: [:index, :playing_set, :playing_get] # main screen needs login implemented
 
     def index
         playlists = Playlist.all      
@@ -18,13 +18,19 @@ class Api::V1::PlaylistsController < ApplicationController
             #Don't add the seed if it's already on the playlist
             render json: { playlist: "Seed is already on playlist" }, status: :created
         end
-    end 
+    end  
+    
+    def playing_set
+        playlist = Playlist.find(params[:playlist][:id])
+        playlist.now_playing = playlist.seed_id
+        render json: { playlist: PlaylistSerializer.new(playlist) }, status: :accepted
+        playlist.destroy
+    end
 
-    def destroy
-        playlist = Playlist.find(params[:id])
-        render json: { playlist: PlaylistSerializer.new(playlist) }, status: :accepted  
-        playlist.destroy      
-    end    
+    def playing_get
+        playlist = Playlist.new()
+        render json: { nowPlaying: playlist.now_playing }, status: :accepted  
+    end
     
     private
 
