@@ -2,6 +2,7 @@ class Api::V1::PlaylistsController < ApplicationController
     skip_before_action :authorized, only: [:index, :playing_set, :playing_get] # main screen needs login implemented
 
     def index
+        #TO DO: If the playlist is empty, pick a random seed add it to the playlist, then return it
         playlists = Playlist.all      
         render json: { playlist: PlaylistSerializer.new(playlists) }, status: :accepted
     end 

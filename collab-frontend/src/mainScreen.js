@@ -17,7 +17,9 @@
 				bloomStrength: 3,
 				bloomThreshold: 0.25,
 				bloomRadius: 0.1
-			};					
+			};		
+			
+			const endPoint = "http://localhost:3000/api/v1/"			
 
 			//Define overall class for the cells matrix
 			class Cell {
@@ -182,7 +184,7 @@
 
 				setSeed(seed) {
 					this._currentSeed = seed
-					console.log(this._currentSeed)
+					//console.log(this._currentSeed)
 				}
 
 				/*
@@ -564,9 +566,7 @@
 				CellEcosystem.cellEcosystem.ageCells();
 			}	
 			
-			function playlistFetch() {
-
-				const endPoint = "http://localhost:3000/api/v1/"		
+			function playlistFetch() {		
 				
 				fetch(endPoint+"playlists", {
 					method: 'GET',
@@ -586,33 +586,27 @@
 					CellEcosystem.cellEcosystem.setSeed(newSeed)
 
 					//Set playlist.now_playing = seed_id (needs new route) (also destroys seed from playlist)
+					nowplayingFetch(json.playlist.data[0].id)
 					
 				  })				
+			}
 
-				/*
-				const bodyData = {playlist: { seed_id } }
+			function nowplayingFetch(id) {		
+
+				const bodyData = {playlist: { id } }
 			  
-				fetch(endPoint+"playlists", {
+				fetch(endPoint+"nowplaying", {
 				  method: "POST",
 				  headers: {
 					"Content-Type": "application/json",
-					Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
 				  },
 				  body: JSON.stringify(bodyData)
 				})
 				.then(response => response.json())
 				.then(json => {
-				  window.alert("Seed added to playlist")
-				  //Clear checkboxes
-				  const seedQueueCheckboxes = document.getElementsByClassName("seed_id")
-			  
-				  for (let i = 0; i < seedQueueCheckboxes.length; i++) {
-					seedQueueCheckboxes[i].checked = false
-				  }
+					console.log(json)
 				})
-				*/ 
-			}
-
+			}			
 			
 			
 			init();
