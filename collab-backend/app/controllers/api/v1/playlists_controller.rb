@@ -5,11 +5,16 @@ class Api::V1::PlaylistsController < ApplicationController
     end 
 
     def create
-        playlist = Playlist.create(playlist_params)
-        if playlist.valid?
-            render json: { playlist: PlaylistSerializer.new(playlist) }, status: :created
+        if !Playlist.exists?(seed_id: params[:playlist][:seed_id])
+            playlist = Playlist.create(playlist_params)
+            if playlist.valid?
+                render json: { playlist: PlaylistSerializer.new(playlist) }, status: :created
+            else
+                render json: { errors: playlist.errors.full_messages }, status: :unprocessible_entity
+            end
         else
-            render json: { errors: playlist.errors.full_messages }, status: :unprocessible_entity
+            #Don't add the seed if it's already on the playlist
+            render json: { playlist: "Seed is already on playlist" }, status: :created
         end
     end 
 

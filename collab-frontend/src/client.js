@@ -185,7 +185,14 @@ function seedFormHandler(e) {
 }
 
 function seedQueueHandler(e) {
-  console.log("Queue seeds...")
+  //Get checkboxes that are checked
+  const seedQueueCheckboxes = document.getElementsByClassName("seed_id")
+
+  for (let i = 0; i < seedQueueCheckboxes.length; i++) {
+    if (seedQueueCheckboxes[i].checked == true) {
+      playlistFetch(seedQueueCheckboxes[i].id)
+    }
+  }
 }
 
 function clearMain() {   
@@ -242,6 +249,29 @@ function createSeedFetch(name, matrix) {
   .then(json => {
     buildPage()
   })
+}
+
+function playlistFetch(seed_id) {
+  const bodyData = {playlist: { seed_id } }
+
+  fetch(endPoint+"playlists", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+    },
+    body: JSON.stringify(bodyData)
+  })
+  .then(response => response.json())
+  .then(json => {
+    window.alert("Seed added to playlist")
+    //Clear checkboxes
+    const seedQueueCheckboxes = document.getElementsByClassName("seed_id")
+
+    for (let i = 0; i < seedQueueCheckboxes.length; i++) {
+      seedQueueCheckboxes[i].checked = false
+    }
+  }) 
 }
 
 function userProfileFetch() {
