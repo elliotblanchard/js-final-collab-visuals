@@ -10,6 +10,15 @@ document.addEventListener('DOMContentLoaded', () => {
 function buildPage() {
   clearMain()
 
+  //Build alert DIV
+  const alertsDiv = document.createElement("div")
+  alertsDiv.setAttribute("id", "alerts")  
+  const alertsLabel = document.createElement("p") 
+  alertsLabel.setAttribute("id", "alertsLabel")
+  alertsLabel.textContent = "" 
+  alertsDiv.appendChild(alertsLabel)   
+  main[0].appendChild(alertsDiv)
+
   if (localStorage.getItem('jwt_token') != undefined) {
     //Already logged in
     console.log("Logged in")
@@ -116,7 +125,7 @@ function loginFormHandler(e) {
   }
   else if (e.path[0].id == "createLink") {
     //Swap to create an account form
-    const loginDiv = document.getElementById("login")
+    const loginDiv = document.getElementById("login")    
 
     const adminHeader = document.createElement("p")
     adminHeader.textContent = "Admin?" 
@@ -146,7 +155,9 @@ function loginFormHandler(e) {
       if (pwInput.length < 6) {
         errorMsg += "Password must be at least 6 characters long."
       }
-      window.alert(errorMsg)
+      const alertsLabel = document.getElementById("alertsLabel") 
+      alertsLabel.textContent = errorMsg 
+      //window.alert(errorMsg)
     }
     else {
       //Submit to backend
@@ -174,7 +185,9 @@ function seedFormHandler(e) {
     if (matrixInput.length != 16) {
       errorMsg += "Martix must be exactly 16 length."
     }
-    window.alert(errorMsg)
+    const alertsLabel = document.getElementById("alertsLabel") 
+    alertsLabel.textContent = errorMsg 
+    //window.alert(errorMsg)
   }
   else {
     //Submit to backend
@@ -264,7 +277,9 @@ function playlistFetch(seed_id) {
   })
   .then(response => response.json())
   .then(json => {
-    window.alert("Seed added to playlist")
+    const alertsLabel = document.getElementById("alertsLabel") 
+    alertsLabel.textContent = "Seed added to playlist" 
+    //window.alert("Seed added to playlist")
     //Clear checkboxes
     const seedQueueCheckboxes = document.getElementsByClassName("seed_id")
 
