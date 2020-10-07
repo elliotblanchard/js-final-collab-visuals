@@ -36,7 +36,12 @@ class Api::V1::PlaylistsController < ApplicationController
 
     def playing_get
         playlist = Playlist.new()
-        render json: { nowPlaying: playlist.now_playing }, status: :accepted  
+        if playlist.now_playing
+            currentSeed = Seed.find(playlist.now_playing)
+            render json: { seed: SeedSerializer.new(currentSeed) }, status: :created
+        else
+            render json: { errors: "Nothing is playing" }, status: :unprocessible_entity
+        end 
     end
     
     private

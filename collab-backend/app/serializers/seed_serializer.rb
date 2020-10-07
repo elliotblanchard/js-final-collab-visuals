@@ -1,4 +1,5 @@
 class SeedSerializer
     include FastJsonapi::ObjectSerializer
-    attributes :name, :matrix, :user
+    attributes :name, :matrix 
+    belongs_to :user
 end

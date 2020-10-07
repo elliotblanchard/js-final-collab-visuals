@@ -333,8 +333,31 @@ function userProfileFetch() {
   })
 }
 
+function nowPlayingFetch() {
+  fetch(endPoint+"nowplaying", {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+    }
+  })
+  .then(response => response.json())
+  .then(json => {
+    //Need to catch error when nothing is playing
+    console.log(`Seed nane is: ${json.seed.data.attributes.name} and user id is: ${json.seed.data.relationships.user.data.id}`) 
+  })
+}
+
 function renderToken() {
     console.log(localStorage.getItem('jwt_token'))
+}
+
+//Timed actions
+let nowPlayingVar = setInterval(nowPlaying, 1000); //Interval to check which seed is playing
+
+function nowPlaying() {
+  nowPlayingFetch()
+  const alertsLabel = document.getElementById("alertsLabel") 
+  alertsLabel.textContent = "Now playing checked"   
 }
 
 
