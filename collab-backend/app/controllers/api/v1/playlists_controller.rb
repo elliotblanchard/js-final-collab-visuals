@@ -1,5 +1,5 @@
 class Api::V1::PlaylistsController < ApplicationController
-    skip_before_action :authorized, only: [:index, :playing_set, :playing_get] # main screen needs login implemented
+    skip_before_action :authorized, only: [:index, :playing_set, :playing_get] # main screen needs login implemented, only allow admins to launch screen
 
     def index
         playlists = Playlist.all    
@@ -40,7 +40,7 @@ class Api::V1::PlaylistsController < ApplicationController
             currentSeed = Seed.find(playlist.now_playing)
             render json: { seed: SeedSerializer.new(currentSeed) }, status: :created
         else
-            render json: { errors: "Nothing is playing" }, status: :unprocessible_entity
+            render json: { errors: "Nothing is playing" }
         end 
     end
     

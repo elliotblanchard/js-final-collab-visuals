@@ -298,7 +298,7 @@ function userProfileFetch() {
   })
   .then(response => response.json())
   .then(json => {
-    console.log(json.user.data.attributes.seeds[0].id)
+    //console.log(json.user.data.attributes.seeds[0].id)
     const userDiv = document.createElement("div")
     const seedsDiv = document.getElementById("seeds")
 
@@ -342,8 +342,17 @@ function nowPlayingFetch() {
   })
   .then(response => response.json())
   .then(json => {
-    //Need to catch error when nothing is playing
-    console.log(`Seed nane is: ${json.seed.data.attributes.name} and user id is: ${json.seed.data.relationships.user.data.id}`) 
+    if (!json.errors) {
+      const alertsLabel = document.getElementById("alertsLabel") 
+      const user = document.getElementById("user")
+      console.log(json.seed.data.relationships.user.data.id)
+      if (user.getAttribute("data-user-id") == json.seed.data.relationships.user.data.id ) {
+        alertsLabel.textContent = `Your seed named is: ${json.seed.data.attributes.name} is now playing on the main screen.` 
+      }
+      else {
+        alertsLabel.textContent = ``
+      }
+    } 
   })
 }
 
@@ -355,9 +364,10 @@ function renderToken() {
 let nowPlayingVar = setInterval(nowPlaying, 1000); //Interval to check which seed is playing
 
 function nowPlaying() {
-  nowPlayingFetch()
-  const alertsLabel = document.getElementById("alertsLabel") 
-  alertsLabel.textContent = "Now playing checked"   
+  if (localStorage.getItem('jwt_token') != undefined) {
+    //If we're logged in
+    nowPlayingFetch()  
+  }
 }
 
 
