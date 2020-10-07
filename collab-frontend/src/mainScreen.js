@@ -184,7 +184,7 @@
 
 				setSeed(seed) {
 					this._currentSeed = seed
-					//console.log(this._currentSeed)
+					//console.log(`Current seed is: ${this._currentSeed.id}`)
 				}
 
 				/*
@@ -604,7 +604,7 @@
 				})
 				.then(response => response.json())
 				.then(json => {
-					console.log(json)
+					//console.log(json)
 				})
 			}			
 			
