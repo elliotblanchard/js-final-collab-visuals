@@ -577,11 +577,13 @@
 				  .then(response => response.json())
 				  .then(json => {
 					//Put first seed info into cell ecosystem's current seed var
+					const firstSeed = json.playlist.data[0].attributes.seed
+					
 					let newSeed = new Seed(
-						json.playlist.data[0].attributes.seed.id, 
-						json.playlist.data[0].attributes.seed.name, 
-						json.playlist.data[0].attributes.seed.matrix, 
-						json.playlist.data[0].attributes.seed.user_id
+						firstSeed.id, 
+						firstSeed.name, 
+						firstSeed.matrix, 
+						firstSeed.user_id
 						)
 					CellEcosystem.cellEcosystem.setSeed(newSeed)
 

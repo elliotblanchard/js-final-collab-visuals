@@ -298,20 +298,21 @@ function userProfileFetch() {
   })
   .then(response => response.json())
   .then(json => {
-    //console.log(json.user.data.attributes.seeds[0].id)
     const userDiv = document.createElement("div")
     const seedsDiv = document.getElementById("seeds")
 
     const seedExistingHeader = document.createElement("h2") 
     seedExistingHeader.textContent = "Send seeds to the main screen" 
     seedsDiv.appendChild(seedExistingHeader)
-    for (let i = 0; i < json.user.data.attributes.seeds.length; i++) {
+
+    const userData = json.user.data.attributes
+    for (let i = 0; i < userData.seeds.length; i++) {
       const seedItem = document.createElement("p")
-      seedItem.textContent = `${json.user.data.attributes.seeds[i].name} (${json.user.data.attributes.seeds[i].matrix})`       
+      seedItem.textContent = `${userData.seeds[i].name} (${userData.seeds[i].matrix})`       
       const seedCheck = document.createElement("INPUT")
       seedCheck.setAttribute("type", "checkbox")
       seedCheck.setAttribute("class", "seed_id")
-      seedCheck.setAttribute("id", json.user.data.attributes.seeds[i].id)
+      seedCheck.setAttribute("id", userData.seeds[i].id)
       seedItem.appendChild(seedCheck)
       seedsDiv.appendChild(seedItem)
     }
@@ -327,7 +328,7 @@ function userProfileFetch() {
     userDiv.setAttribute("id", "user")
     userDiv.setAttribute("data-user-id", json.user.data.id);
     const userHeader = document.createElement("h1")
-    userHeader.textContent = `Welcome back ${json.user.data.attributes.username}`
+    userHeader.textContent = `Welcome back ${userData.username}`
     userDiv.appendChild(userHeader) 
     main[0].insertBefore(userDiv,seedsDiv)    
   })
@@ -345,9 +346,10 @@ function nowPlayingFetch() {
     if (!json.errors) {
       const alertsLabel = document.getElementById("alertsLabel") 
       const user = document.getElementById("user")
-      console.log(json.seed.data.relationships.user.data.id)
-      if (user.getAttribute("data-user-id") == json.seed.data.relationships.user.data.id ) {
-        alertsLabel.textContent = `Your seed named is: ${json.seed.data.attributes.name} is now playing on the main screen.` 
+      const nowPlayingData = json.seed.data
+      
+      if (user.getAttribute("data-user-id") == nowPlayingData.relationships.user.data.id ) {
+        alertsLabel.textContent = `Your seed named is: ${nowPlayingData.attributes.name} is now playing on the main screen.` 
       }
       else {
         alertsLabel.textContent = ``
