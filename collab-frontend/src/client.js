@@ -2,9 +2,7 @@ const endPoint = "http://localhost:3000/api/v1/"
 const main = document.getElementsByTagName("main")
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM is Loaded")
     buildPage()
-
   })
 
 function buildPage() {
@@ -21,9 +19,8 @@ function buildPage() {
 
   if (localStorage.getItem('jwt_token') != undefined) {
     //Already logged in
-    console.log("Logged in")
 
-    //Greet user, show their seeds
+    //Greet user, show their existing seeds
     userProfileFetch()
 
     //Add logout button
@@ -70,11 +67,9 @@ function buildPage() {
     //Add event listeners
     logoutButton.addEventListener("click", (e) => loginFormHandler(e))    
     seedSubmitButton.addEventListener("click", (e) => seedFormHandler(e))
-
   }
   else {
-    //Need to login / create account
-    console.log("Not logged in")
+    //Not logged in: need to login / create account
     const loginDiv = document.createElement("div")
     loginDiv.setAttribute("id", "login")
     const loginHeader = document.createElement("p")
@@ -117,7 +112,6 @@ function buildPage() {
 }
 
 function loginFormHandler(e) {
-  //console.log(e.path[0].id)
   if (e.path[0].id == "logoutBtn") {
     localStorage.removeItem('jwt_token') //to logout, everything handled on the frontend
     console.log("Logging out")
@@ -142,7 +136,6 @@ function loginFormHandler(e) {
 
   }
   else {
-    //e.path[0].textContent
     //Check input fields
     let errorMsg = ""
     const usernameInput = document.getElementById("usernameField").value
@@ -157,7 +150,6 @@ function loginFormHandler(e) {
       }
       const alertsLabel = document.getElementById("alertsLabel") 
       alertsLabel.textContent = errorMsg 
-      //window.alert(errorMsg)
     }
     else {
       //Submit to backend
@@ -187,7 +179,6 @@ function seedFormHandler(e) {
     }
     const alertsLabel = document.getElementById("alertsLabel") 
     alertsLabel.textContent = errorMsg 
-    //window.alert(errorMsg)
   }
   else {
     //Submit to backend
@@ -279,7 +270,7 @@ function playlistFetch(seed_id) {
   .then(json => {
     const alertsLabel = document.getElementById("alertsLabel") 
     alertsLabel.textContent = "Seed added to playlist" 
-    //window.alert("Seed added to playlist")
+
     //Clear checkboxes
     const seedQueueCheckboxes = document.getElementsByClassName("seed_id")
 
