@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 
 function buildPage() {
-  clearMain()
+  clear()
 
   //Build alert DIV
   const alertsDiv = document.createElement("div")
@@ -22,15 +22,6 @@ function buildPage() {
 
     //Greet user, show their existing seeds
     userProfileFetch()
-
-    //Add logout button
-    const loginDiv = document.createElement("div")
-    loginDiv.setAttribute("id", "login")
-    const logoutButton = document.createElement("button")
-    logoutButton.setAttribute("id", "logoutBtn")
-    logoutButton.textContent = "Logout"
-    loginDiv.appendChild(logoutButton)
-    main[0].appendChild(loginDiv)
 
     //Build form to submit new seeds
     const seedsDiv = document.createElement("div")
@@ -64,8 +55,7 @@ function buildPage() {
 
     main[0].appendChild(seedsDiv)
 
-    //Add event listeners
-    logoutButton.addEventListener("click", (e) => loginFormHandler(e))    
+    //Add event listeners    
     seedSubmitButton.addEventListener("click", (e) => seedFormHandler(e))
   }
   else {
@@ -112,7 +102,7 @@ function buildPage() {
 }
 
 function loginFormHandler(e) {
-  if (e.path[0].id == "logoutBtn") {
+  if (e.path[0].id == "logout") {
     localStorage.removeItem('jwt_token') //to logout, everything handled on the frontend
     console.log("Logging out")
     buildPage()
@@ -199,7 +189,9 @@ function seedQueueHandler(e) {
   }
 }
 
-function clearMain() {   
+function clear() {   
+  const header = document.getElementById("header")
+  header.innerHTML = ""
   main[0].innerHTML = ""
 } 
 
@@ -289,14 +281,33 @@ function userProfileFetch() {
   })
   .then(response => response.json())
   .then(json => {
+    const headerDiv = document.getElementById("header")
     const userDiv = document.createElement("div")
     const seedsDiv = document.getElementById("seeds")
+
+    const userData = json.user.data.attributes
+
+    //Add user name
+    const userHeader = document.createElement("p")
+    userHeader.setAttribute("id", "user")
+    userHeader.setAttribute("class", "header-light")
+    userHeader.setAttribute("data-user-id", json.user.data.id)
+    userHeader.innerHTML = `${userData.username} |&nbsp;`
+    headerDiv.appendChild(userHeader) 
+    
+    //Add logout link
+    const logout = document.createElement("a")
+    logout.setAttribute("class", "header-light")
+    logout.setAttribute("id", "logout")
+    logout.setAttribute("href", "#")
+    logout.innerHTML = "Logout"
+    logout.addEventListener("click", (e) => loginFormHandler(e))
+    headerDiv.appendChild(logout)   
 
     const seedExistingHeader = document.createElement("h2") 
     seedExistingHeader.textContent = "Send seeds to the main screen" 
     seedsDiv.appendChild(seedExistingHeader)
 
-    const userData = json.user.data.attributes
     for (let i = 0; i < userData.seeds.length; i++) {
       const seedItem = document.createElement("p")
       seedItem.textContent = `${userData.seeds[i].name} (${userData.seeds[i].matrix})`       
@@ -316,12 +327,14 @@ function userProfileFetch() {
     //Add event listener   
     seedQueueButton.addEventListener("click", (e) => seedQueueHandler(e))
 
+    /*
     userDiv.setAttribute("id", "user")
     userDiv.setAttribute("data-user-id", json.user.data.id);
     const userHeader = document.createElement("h1")
     userHeader.textContent = `Welcome back ${userData.username}`
     userDiv.appendChild(userHeader) 
     main[0].insertBefore(userDiv,seedsDiv)    
+    */
   })
 }
 

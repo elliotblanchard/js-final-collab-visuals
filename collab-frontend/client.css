@@ -47,6 +47,11 @@ body {
 /*
  * Header
  */
+
+.header-light {
+  font-family: 'Chivo Light';font-size: 15px;
+}
+
 .masthead {
   margin-bottom: 2rem;
 }
