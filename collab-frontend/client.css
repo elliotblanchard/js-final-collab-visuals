@@ -49,7 +49,12 @@ body {
  */
 
 .header-light {
-  font-family: 'Chivo Light';font-size: 15px;
+  font-family: 'Chivo Light';font-size: 15px
+}
+
+.heavy {
+  font-family: 'Chivo Black';font-size: 50px;
+  line-height: 50px
 }
 
 .masthead {

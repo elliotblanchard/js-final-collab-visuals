@@ -27,8 +27,9 @@ function buildPage() {
     const seedsDiv = document.createElement("div")
     seedsDiv.setAttribute("id", "seeds")
 
-    const seedHeader = document.createElement("h2") 
-    seedHeader.textContent = "Create a new seed" 
+    const seedHeader = document.createElement("p") 
+    seedHeader.setAttribute("class", "heavy")
+    seedHeader.textContent = "Create a visual seed to drive the big screen." 
     seedsDiv.appendChild(seedHeader)
 
     const nameLabel = document.createElement("p") 
@@ -326,15 +327,6 @@ function userProfileFetch() {
 
     //Add event listener   
     seedQueueButton.addEventListener("click", (e) => seedQueueHandler(e))
-
-    /*
-    userDiv.setAttribute("id", "user")
-    userDiv.setAttribute("data-user-id", json.user.data.id);
-    const userHeader = document.createElement("h1")
-    userHeader.textContent = `Welcome back ${userData.username}`
-    userDiv.appendChild(userHeader) 
-    main[0].insertBefore(userDiv,seedsDiv)    
-    */
   })
 }
 
