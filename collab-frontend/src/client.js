@@ -8,15 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
 function buildPage() {
   clear()
 
-  //Build alert DIV
-  const alertsDiv = document.createElement("div")
-  alertsDiv.setAttribute("id", "alerts")  
-  const alertsLabel = document.createElement("p") 
-  alertsLabel.setAttribute("id", "alertsLabel")
-  alertsLabel.textContent = "" 
-  alertsDiv.appendChild(alertsLabel)   
-  main[0].appendChild(alertsDiv)
-
   if (localStorage.getItem('jwt_token') != undefined) {
     //Already logged in
 
@@ -29,30 +20,50 @@ function buildPage() {
 
     const seedHeader = document.createElement("p") 
     seedHeader.setAttribute("class", "heavy")
-    seedHeader.textContent = "Create a visual seed to drive the big screen." 
+    seedHeader.innerHTML = "Create a <span class='red'>visual seed</span> to drive the big screen." 
     seedsDiv.appendChild(seedHeader)
 
-    const nameLabel = document.createElement("p") 
-    nameLabel.textContent = "Name" 
-    seedsDiv.appendChild(nameLabel) 
-    const name = document.createElement("INPUT")
-    name.setAttribute("type", "text")
-    name.setAttribute("id", "nameField")
-    seedsDiv.appendChild(name)   
-    
+    //Build alert DIV
+    const alertsDiv = document.createElement("div")
+    alertsDiv.setAttribute("id", "alerts")  
+    const alertsLabel = document.createElement("p") 
+    alertsLabel.setAttribute("id", "alertsLabel")
+    alertsLabel.textContent = "" 
+    alertsDiv.appendChild(alertsLabel)   
+    seedsDiv.appendChild(alertsDiv)
+
     const matrixLabel = document.createElement("p") 
+    matrixLabel.setAttribute("class","label")
     matrixLabel.textContent = "Matrix" 
     seedsDiv.appendChild(matrixLabel) 
     const matrix = document.createElement("INPUT")
     matrix.setAttribute("type", "text")
+    matrix.setAttribute("class", "input")
     matrix.setAttribute("id", "matrixField")
     seedsDiv.appendChild(matrix)     
+
+    const nameLabel = document.createElement("p") 
+    nameLabel.setAttribute("class","label")
+    nameLabel.textContent = "Name" 
+    seedsDiv.appendChild(nameLabel) 
+    const name = document.createElement("INPUT")
+    name.setAttribute("type", "text")
+    name.setAttribute("class", "input")
+    name.setAttribute("id", "nameField")
+    seedsDiv.appendChild(name)       
 
     const seedSubmitButton = document.createElement("button")
     seedSubmitButton.setAttribute("id", "seedSubmitBtn")
     seedSubmitButton.textContent = "Submit"
-    seedsDiv.appendChild(seedSubmitButton)    
+    seedsDiv.appendChild(seedSubmitButton)   
+    
+    const lineBreak = document.createElement("br")
+    seedsDiv.appendChild(lineBreak)
+    seedsDiv.appendChild(lineBreak)
 
+    const bar = document.createElement("img")
+    bar.setAttribute("src","img/bar.png")
+    seedsDiv.appendChild(bar)
 
     main[0].appendChild(seedsDiv)
 

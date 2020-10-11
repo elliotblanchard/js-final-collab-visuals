@@ -43,6 +43,14 @@ body {
   max-width: 30em;
 }
 
+.orange {
+  color: #f7ab30
+}
+
+.red {
+  color: #fa4757
+}
+
 
 /*
  * Header
@@ -52,9 +60,24 @@ body {
   font-family: 'Chivo Light';font-size: 15px
 }
 
+.alert {
+  font-size: 17px
+}
+
+.label {
+  font-family: 'Chivo Black';font-size: 20px;
+  margin: 2px
+}
+
 .heavy {
   font-family: 'Chivo Black';font-size: 50px;
   line-height: 50px
+}
+
+.input {
+  border: 1px solid white;
+  background-color: #222;
+  color: white;  
 }
 
 .masthead {
