@@ -3,7 +3,6 @@ const main = document.getElementsByTagName("main")
 const unselectedCirc = "<svg class='unselected' height='48' width='48'><circle cx='25' cy='25' r='20' stroke='white' stroke-width='5' fill='#222' /></svg>"
 const selectedCirc = "<svg class='selected' height='48' width='48'><circle cx='25' cy='25' r='20' stroke='white' stroke-width='5' fill='white' /></svg>"
 
-
 document.addEventListener('DOMContentLoaded', () => {
     buildPage()
   })
@@ -37,6 +36,7 @@ function buildPage() {
 
     //Build matrix 
     const matrixTable = document.createElement("TABLE")
+    matrixTable.setAttribute("id","matrixTable")
 
     /*
     00 01 02 03 04 05 06
@@ -49,24 +49,28 @@ function buildPage() {
     */
 
     const activeCells = [3,9,11,15,17,19,21,23,25,27,29,31,33,37,39,45]
-    let k = 0
+    let tableCell = 0
+    let matrixCell = 0
     for (let i = 0; i < 7; i++) {
       const row = document.createElement("TR")
       for (let j = 0; j < 7; j++) {
         const cell = document.createElement("TD")
-        if (activeCells.includes(k)) {
+        if (activeCells.includes(tableCell)) {
           cell.setAttribute("class","unselected")
+          cell.setAttribute("id",`cell_${matrixCell}`)
           cell.innerHTML = unselectedCirc
+          matrixCell++
           //Add event listeners    
           cell.addEventListener("click", (e) => matrixManager(e))
         }
         row.appendChild(cell)
-        k++
+        tableCell++
       }
       matrixTable.appendChild(row)
     }
     seedsDiv.appendChild(matrixTable)
 
+    /*
     const matrixLabel = document.createElement("p") 
     matrixLabel.setAttribute("class","label")
     matrixLabel.textContent = "Matrix" 
@@ -75,11 +79,12 @@ function buildPage() {
     matrix.setAttribute("type", "text")
     matrix.setAttribute("class", "input")
     matrix.setAttribute("id", "matrixField")
-    seedsDiv.appendChild(matrix)     
+    seedsDiv.appendChild(matrix)  
+    */   
 
     const nameLabel = document.createElement("p") 
     nameLabel.setAttribute("class","label")
-    nameLabel.textContent = "Name" 
+    nameLabel.textContent = "Seed Name" 
     seedsDiv.appendChild(nameLabel) 
     const name = document.createElement("INPUT")
     name.setAttribute("type", "text")
@@ -204,7 +209,7 @@ function loginFormHandler(e) {
 }
 
 function matrixManager(e) {
-  //console.log(e.path[2])
+  //console.log(e.path[2].getAttribute("id").split("_")[1])
   if (e.path[2].getAttribute("class") == "unselected") {
     e.path[2].innerHTML = selectedCirc
     e.path[2].setAttribute("class","selected")
@@ -218,21 +223,28 @@ function matrixManager(e) {
 function seedFormHandler(e) {
   let errorMsg = ""
   const nameInput = document.getElementById("nameField").value
-  const matrixInput = document.getElementById("matrixField").value
+  let matrixInput = ""
 
-  if ( (nameInput.length < 6) || (matrixInput.length != 16) ) {
-    if (nameInput.length < 6) {
-      errorMsg += "Name must be at least 6 characters long."
-    }
-    //if (matrixInput.length != 16) {
-    //  errorMsg += "Martix must be exactly 16 length."
-    //}
+  if ( nameInput.length < 6 ) {
+    errorMsg += "Name must be at least 6 characters long."
     const alertsLabel = document.getElementById("alertsLabel") 
     alertsLabel.textContent = errorMsg 
   }
   else {
+    //Get seed definition from matrix
+    const matrixTable = document.getElementById("matrixTable")
+    for (let i = 0; i < matrixTable.rows.length; i++) {
+      for (let j = 0; j < matrixTable.rows[i].cells.length; j++) {
+        if (matrixTable.rows[i].cells[j].getAttribute("class") == "unselected") {
+          matrixInput += "0"
+        }
+        else if (matrixTable.rows[i].cells[j].getAttribute("class") == "selected") {
+          matrixInput += "1"
+        }
+      }
+    }
     //Submit to backend
-    console.log("submitting")
+    //console.log("submitting")
     createSeedFetch(nameInput, matrixInput)
   }
 

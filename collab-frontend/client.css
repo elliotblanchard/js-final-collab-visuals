@@ -93,6 +93,7 @@ body {
   border: 1px solid #f7ab30; 
   background-color: #222;
   color: #f7ab30;
+  outline: none;
   padding: 6px 20px;
   margin: 0px 10px;
   text-align: center;
