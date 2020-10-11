@@ -1,5 +1,8 @@
 const endPoint = "http://localhost:3000/api/v1/"
 const main = document.getElementsByTagName("main")
+const unselectedCirc = "<svg class='unselected' height='48' width='48'><circle cx='25' cy='25' r='20' stroke='white' stroke-width='5' fill='#222' /></svg>"
+const selectedCirc = "<svg class='selected' height='48' width='48'><circle cx='25' cy='25' r='20' stroke='white' stroke-width='5' fill='white' /></svg>"
+
 
 document.addEventListener('DOMContentLoaded', () => {
     buildPage()
@@ -32,6 +35,38 @@ function buildPage() {
     alertsDiv.appendChild(alertsLabel)   
     seedsDiv.appendChild(alertsDiv)
 
+    //Build matrix 
+    const matrixTable = document.createElement("TABLE")
+
+    /*
+    00 01 02 03 04 05 06
+    07 08 09 10 11 12 13
+    14 15 16 17 18 19 20
+    21 22 23 24 25 26 27
+    28 29 30 31 32 33 34
+    35 36 37 38 39 40 41
+    42 43 44 45 46 47 48
+    */
+
+    const activeCells = [3,9,11,15,17,19,21,23,25,27,29,31,33,37,39,45]
+    let k = 0
+    for (let i = 0; i < 7; i++) {
+      const row = document.createElement("TR")
+      for (let j = 0; j < 7; j++) {
+        const cell = document.createElement("TD")
+        if (activeCells.includes(k)) {
+          cell.setAttribute("class","unselected")
+          cell.innerHTML = unselectedCirc
+          //Add event listeners    
+          cell.addEventListener("click", (e) => matrixManager(e))
+        }
+        row.appendChild(cell)
+        k++
+      }
+      matrixTable.appendChild(row)
+    }
+    seedsDiv.appendChild(matrixTable)
+
     const matrixLabel = document.createElement("p") 
     matrixLabel.setAttribute("class","label")
     matrixLabel.textContent = "Matrix" 
@@ -54,6 +89,7 @@ function buildPage() {
 
     const seedSubmitButton = document.createElement("button")
     seedSubmitButton.setAttribute("id", "seedSubmitBtn")
+    seedSubmitButton.setAttribute("class", "button")
     seedSubmitButton.textContent = "Submit"
     seedsDiv.appendChild(seedSubmitButton)   
     
@@ -167,6 +203,18 @@ function loginFormHandler(e) {
   }
 }
 
+function matrixManager(e) {
+  //console.log(e.path[2])
+  if (e.path[2].getAttribute("class") == "unselected") {
+    e.path[2].innerHTML = selectedCirc
+    e.path[2].setAttribute("class","selected")
+  }
+  else {
+    e.path[2].innerHTML = unselectedCirc
+    e.path[2].setAttribute("class","unselected")    
+  }
+}
+
 function seedFormHandler(e) {
   let errorMsg = ""
   const nameInput = document.getElementById("nameField").value
@@ -176,9 +224,9 @@ function seedFormHandler(e) {
     if (nameInput.length < 6) {
       errorMsg += "Name must be at least 6 characters long."
     }
-    if (matrixInput.length != 16) {
-      errorMsg += "Martix must be exactly 16 length."
-    }
+    //if (matrixInput.length != 16) {
+    //  errorMsg += "Martix must be exactly 16 length."
+    //}
     const alertsLabel = document.getElementById("alertsLabel") 
     alertsLabel.textContent = errorMsg 
   }
@@ -316,8 +364,9 @@ function userProfileFetch() {
     logout.addEventListener("click", (e) => loginFormHandler(e))
     headerDiv.appendChild(logout)   
 
-    const seedExistingHeader = document.createElement("h2") 
-    seedExistingHeader.textContent = "Send seeds to the main screen" 
+    const seedExistingHeader = document.createElement("p") 
+    seedExistingHeader.setAttribute("class", "heavy")
+    seedExistingHeader.innerHTML = "<span class='red'>Choose</span> one of your visual seeds to send to the big screen." 
     seedsDiv.appendChild(seedExistingHeader)
 
     for (let i = 0; i < userData.seeds.length; i++) {

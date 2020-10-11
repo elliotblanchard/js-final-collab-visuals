@@ -77,7 +77,29 @@ body {
 .input {
   border: 1px solid white;
   background-color: #222;
-  color: white;  
+  width: 60%;
+  outline: none;
+  color: white;
+  padding: 6px 20px;
+  margin: 0px 0px;
+  text-align: left;
+  text-decoration: none;
+  display: inline-block;
+  font-family: 'Chivo';
+  font-size: 16px;    
+}
+
+.button {
+  border: 1px solid #f7ab30; 
+  background-color: #222;
+  color: #f7ab30;
+  padding: 6px 20px;
+  margin: 0px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-family: 'Chivo Black';
+  font-size: 16px;
 }
 
 .masthead {
@@ -138,3 +160,4 @@ body {
 .mastfoot {
   color: rgba(255, 255, 255, .5);
 }
+
