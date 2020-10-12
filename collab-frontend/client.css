@@ -103,6 +103,14 @@ body {
   font-size: 16px;
 }
 
+.seedItem {
+  text-align: center;
+  height: 175px;
+  outline-style: solid;
+  outline-color: white;
+  outline-width: 1px
+}
+
 .masthead {
   margin-bottom: 2rem;
 }

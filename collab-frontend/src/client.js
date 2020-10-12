@@ -376,11 +376,32 @@ function userProfileFetch() {
     logout.addEventListener("click", (e) => loginFormHandler(e))
     headerDiv.appendChild(logout)   
 
+    //Existing seeds header
     const seedExistingHeader = document.createElement("p") 
     seedExistingHeader.setAttribute("class", "heavy")
     seedExistingHeader.innerHTML = "<span class='red'>Choose</span> one of your visual seeds to send to the big screen." 
     seedsDiv.appendChild(seedExistingHeader)
 
+    //Seeds DIVs
+    for (let i = 0; i < userData.seeds.length; i++) {
+      //console.log(`mod is: ${i%2}`)
+
+      const seedRow = document.createElement("div")
+      seedRow.setAttribute("class","row")
+
+      const seedItem = document.createElement("div")
+      seedItem.setAttribute("class","col-sm-4 seedItem")
+      //seedItem.setAttribute("class","seedItem")
+      const seedHeader = document.createElement("p")
+      seedHeader.setAttribute("class","label")
+      seedHeader.textContent = `${userData.seeds[i].name}`
+
+      seedItem.appendChild(seedHeader)
+      seedRow.appendChild(seedItem)
+      seedsDiv.appendChild(seedRow)
+    }
+
+    /*
     for (let i = 0; i < userData.seeds.length; i++) {
       const seedItem = document.createElement("p")
       seedItem.textContent = `${userData.seeds[i].name} (${userData.seeds[i].matrix})`       
@@ -391,6 +412,7 @@ function userProfileFetch() {
       seedItem.appendChild(seedCheck)
       seedsDiv.appendChild(seedItem)
     }
+    */
 
     const seedQueueButton = document.createElement("button")
     seedQueueButton.setAttribute("id", "seedQueueBtn")
