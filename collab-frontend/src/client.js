@@ -1,7 +1,5 @@
 const endPoint = "http://localhost:3000/api/v1/"
 const main = document.getElementsByTagName("main")
-const unselectedCirc = "<svg class='unselected' height='48' width='48'><circle cx='25' cy='25' r='20' stroke='white' stroke-width='5' fill='#222' /></svg>"
-const selectedCirc = "<svg class='selected' height='48' width='48'><circle cx='25' cy='25' r='20' stroke='white' stroke-width='5' fill='white' /></svg>"
 
 document.addEventListener('DOMContentLoaded', () => {
     buildPage()
@@ -34,19 +32,16 @@ function buildPage() {
     alertsDiv.appendChild(alertsLabel)   
     seedsDiv.appendChild(alertsDiv)
 
+    //Build matrix
+    createMatrix("0000000000000000",seedsDiv,20,48)
+    
+    /*
     //Build matrix 
+    const unselectedCirc = "<svg class='unselected' height='48' width='48'><circle cx='25' cy='25' r='20' stroke='white' stroke-width='5' fill='#222' /></svg>"
+    const selectedCirc = "<svg class='selected' height='48' width='48'><circle cx='25' cy='25' r='20' stroke='white' stroke-width='5' fill='white' /></svg>"
+
     const matrixTable = document.createElement("TABLE")
     matrixTable.setAttribute("id","matrixTable")
-
-    /*
-    00 01 02 03 04 05 06
-    07 08 09 10 11 12 13
-    14 15 16 17 18 19 20
-    21 22 23 24 25 26 27
-    28 29 30 31 32 33 34
-    35 36 37 38 39 40 41
-    42 43 44 45 46 47 48
-    */
 
     const activeCells = [3,9,11,15,17,19,21,23,25,27,29,31,33,37,39,45]
     let tableCell = 0
@@ -69,6 +64,7 @@ function buildPage() {
       matrixTable.appendChild(row)
     }
     seedsDiv.appendChild(matrixTable)
+    */
 
     /*
     const matrixLabel = document.createElement("p") 
@@ -211,11 +207,11 @@ function loginFormHandler(e) {
 function matrixManager(e) {
   //console.log(e.path[2].getAttribute("id").split("_")[1])
   if (e.path[2].getAttribute("class") == "unselected") {
-    e.path[2].innerHTML = selectedCirc
+    e.path[2].innerHTML = circ(true,20,48) 
     e.path[2].setAttribute("class","selected")
   }
   else {
-    e.path[2].innerHTML = unselectedCirc
+    e.path[2].innerHTML = circ(false,20,48)
     e.path[2].setAttribute("class","unselected")    
   }
 }
@@ -451,6 +447,54 @@ function nowPlayingFetch() {
 function renderToken() {
     console.log(localStorage.getItem('jwt_token'))
 }
+
+function createMatrix(matrix,parentDiv,circRadius,heightWidth) {
+
+    //Build matrix 
+    //const unselectedCirc = `<svg class='unselected' height='${heightWidth}' width='${heightWidth}'><circle cx='25' cy='25' r='${circRadius}' stroke='white' stroke-width='5' fill='#222' /></svg>`
+    //const selectedCirc = `<svg class='selected' height='${heightWidth}' width='${heightWidth}'><circle cx='25' cy='25' r='${circRadius}' stroke='white' stroke-width='5' fill='white' /></svg>`
+
+    const matrixTable = document.createElement("TABLE")
+    matrixTable.setAttribute("id","matrixTable")
+
+    const activeCells = [3,9,11,15,17,19,21,23,25,27,29,31,33,37,39,45]
+    let tableCell = 0
+    let matrixCell = 0
+    for (let i = 0; i < 7; i++) {
+      const row = document.createElement("TR")
+      for (let j = 0; j < 7; j++) {
+        const cell = document.createElement("TD")
+        if (activeCells.includes(tableCell)) {
+          cell.setAttribute("id",`cell_${matrixCell}`)
+          if (matrix[tableCell] == "1") {
+            cell.setAttribute("class","selected")
+            cell.innerHTML = circ(true,circRadius,heightWidth)
+          }
+          else {
+            cell.setAttribute("class","unselected")
+            cell.innerHTML = circ(false,circRadius,heightWidth)            
+          }
+          matrixCell++
+          //Add event listeners    
+          cell.addEventListener("click", (e) => matrixManager(e))
+        }
+        row.appendChild(cell)
+        tableCell++
+      }
+      matrixTable.appendChild(row)
+    }
+    parentDiv.appendChild(matrixTable)
+
+}
+
+function circ(selected,circRadius,heightWidth) {
+  if (selected == true) {
+    return `<svg class='selected' height='${heightWidth}' width='${heightWidth}'><circle cx='25' cy='25' r='${circRadius}' stroke='white' stroke-width='5' fill='white' /></svg>`
+  }
+  else {
+    return `<svg class='unselected' height='${heightWidth}' width='${heightWidth}'><circle cx='25' cy='25' r='${circRadius}' stroke='white' stroke-width='5' fill='#222' /></svg>`
+  }
+ }
 
 //Timed actions
 let nowPlayingVar = setInterval(nowPlaying, 1000); //Interval to check which seed is playing
