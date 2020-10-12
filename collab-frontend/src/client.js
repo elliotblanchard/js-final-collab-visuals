@@ -182,13 +182,13 @@ function loginFormHandler(e) {
 
     if ( (usernameInput.length < 4) || (pwInput.length < 6) ) {
       if (usernameInput.length < 4) {
-        errorMsg += "Username must be at least 4 characters long."
+        errorMsg += "Username must be at least <span class='orange'>4 characters</span> long."
       }
       if (pwInput.length < 6) {
-        errorMsg += "Password must be at least 6 characters long."
+        errorMsg += "Password must be at least <span class='orange'>6 characters</span> long."
       }
       const alertsLabel = document.getElementById("alertsLabel") 
-      alertsLabel.textContent = errorMsg 
+      alertsLabel.innerHTML = errorMsg 
     }
     else {
       //Submit to backend
@@ -222,9 +222,9 @@ function seedFormHandler(e) {
   let matrixInput = ""
 
   if ( nameInput.length < 6 ) {
-    errorMsg += "Name must be at least 6 characters long."
+    errorMsg += "Name must be at least <span class='orange'>6 characters</span> long."
     const alertsLabel = document.getElementById("alertsLabel") 
-    alertsLabel.textContent = errorMsg 
+    alertsLabel.innerHTML = errorMsg 
   }
   else {
     //Get seed definition from matrix
