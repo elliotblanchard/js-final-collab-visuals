@@ -33,7 +33,7 @@ function buildPage() {
     seedsDiv.appendChild(alertsDiv)
 
     //Build matrix
-    createMatrix("0000000000000000",seedsDiv,20,48)
+    createMatrix("0000000000000000",seedsDiv,20,48,true,25,5)
     
     /*
     //Build matrix 
@@ -207,11 +207,11 @@ function loginFormHandler(e) {
 function matrixManager(e) {
   //console.log(e.path[2].getAttribute("id").split("_")[1])
   if (e.path[2].getAttribute("class") == "unselected") {
-    e.path[2].innerHTML = circ(true,20,48) 
+    e.path[2].innerHTML = circ(true,20,48,25,5) 
     e.path[2].setAttribute("class","selected")
   }
   else {
-    e.path[2].innerHTML = circ(false,20,48)
+    e.path[2].innerHTML = circ(false,20,48,25,5)
     e.path[2].setAttribute("class","unselected")    
   }
 }
@@ -386,13 +386,17 @@ function userProfileFetch() {
       seedRow.setAttribute("class","row")
 
       const seedItem = document.createElement("div")
-      seedItem.setAttribute("class","col-sm-4 seedItem")
-      //seedItem.setAttribute("class","seedItem")
+      seedItem.setAttribute("class","col-sm-5 seedItem")
+      
+      //Seed matrix
+      createMatrix(userData.seeds[i].matrix,seedItem,4,20,false,5,2)
+
+      //Seed name
       const seedHeader = document.createElement("p")
       seedHeader.setAttribute("class","label")
       seedHeader.textContent = `${userData.seeds[i].name}`
-
       seedItem.appendChild(seedHeader)
+
       seedRow.appendChild(seedItem)
       seedsDiv.appendChild(seedRow)
     }
@@ -448,7 +452,7 @@ function renderToken() {
     console.log(localStorage.getItem('jwt_token'))
 }
 
-function createMatrix(matrix,parentDiv,circRadius,heightWidth) {
+function createMatrix(matrix,parentDiv,circRadius,heightWidth,interactive,center,thickness) {
 
     //Build matrix 
     //const unselectedCirc = `<svg class='unselected' height='${heightWidth}' width='${heightWidth}'><circle cx='25' cy='25' r='${circRadius}' stroke='white' stroke-width='5' fill='#222' /></svg>`
@@ -460,23 +464,26 @@ function createMatrix(matrix,parentDiv,circRadius,heightWidth) {
     const activeCells = [3,9,11,15,17,19,21,23,25,27,29,31,33,37,39,45]
     let tableCell = 0
     let matrixCell = 0
+
     for (let i = 0; i < 7; i++) {
       const row = document.createElement("TR")
       for (let j = 0; j < 7; j++) {
         const cell = document.createElement("TD")
         if (activeCells.includes(tableCell)) {
           cell.setAttribute("id",`cell_${matrixCell}`)
-          if (matrix[tableCell] == "1") {
+          if (matrix[matrixCell] == "1") {
             cell.setAttribute("class","selected")
-            cell.innerHTML = circ(true,circRadius,heightWidth)
+            cell.innerHTML = circ(true,circRadius,heightWidth,center,thickness)
           }
           else {
             cell.setAttribute("class","unselected")
-            cell.innerHTML = circ(false,circRadius,heightWidth)            
+            cell.innerHTML = circ(false,circRadius,heightWidth,center,thickness)            
           }
           matrixCell++
-          //Add event listeners    
-          cell.addEventListener("click", (e) => matrixManager(e))
+          if (interactive == true) {
+            //Add event listeners    
+            cell.addEventListener("click", (e) => matrixManager(e))
+          }
         }
         row.appendChild(cell)
         tableCell++
@@ -487,12 +494,12 @@ function createMatrix(matrix,parentDiv,circRadius,heightWidth) {
 
 }
 
-function circ(selected,circRadius,heightWidth) {
+function circ(selected,circRadius,heightWidth,center,thickness) {
   if (selected == true) {
-    return `<svg class='selected' height='${heightWidth}' width='${heightWidth}'><circle cx='25' cy='25' r='${circRadius}' stroke='white' stroke-width='5' fill='white' /></svg>`
+    return `<svg class='selected' height='${heightWidth}' width='${heightWidth}'><circle cx='${center}' cy='${center}' r='${circRadius}' stroke='white' stroke-width='${thickness}' fill='white' /></svg>`
   }
   else {
-    return `<svg class='unselected' height='${heightWidth}' width='${heightWidth}'><circle cx='25' cy='25' r='${circRadius}' stroke='white' stroke-width='5' fill='#222' /></svg>`
+    return `<svg class='unselected' height='${heightWidth}' width='${heightWidth}'><circle cx='${center}' cy='${center}' r='${circRadius}' stroke='white' stroke-width='${thickness}' fill='#222' /></svg>`
   }
  }
 
