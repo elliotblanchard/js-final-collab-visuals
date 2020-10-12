@@ -95,7 +95,7 @@ body {
   color: #f7ab30;
   outline: none;
   padding: 6px 20px;
-  margin: 0px 10px;
+  margin: 10px 10px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -104,6 +104,10 @@ body {
 }
 
 .seedItem {
+  margin-top: 30px;
+  margin-right: 15px;
+  margin-left: 15px;
+  padding-top: 10px;
   text-align: center;
   outline-style: solid;
   outline-color: white;

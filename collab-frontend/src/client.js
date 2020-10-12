@@ -247,6 +247,9 @@ function seedFormHandler(e) {
 }
 
 function seedQueueHandler(e) {
+  playlistFetch(e.path[0].getAttribute("id"),e.path[0].textContent)
+
+  /*
   //Get checkboxes that are checked
   const seedQueueCheckboxes = document.getElementsByClassName("seed_id")
 
@@ -255,6 +258,7 @@ function seedQueueHandler(e) {
       playlistFetch(seedQueueCheckboxes[i].id)
     }
   }
+  */
 }
 
 function clear() {   
@@ -315,7 +319,7 @@ function createSeedFetch(name, matrix) {
   })
 }
 
-function playlistFetch(seed_id) {
+function playlistFetch(seed_id,name) {
   const bodyData = {playlist: { seed_id } }
 
   fetch(endPoint+"playlists", {
@@ -329,14 +333,16 @@ function playlistFetch(seed_id) {
   .then(response => response.json())
   .then(json => {
     const alertsLabel = document.getElementById("alertsLabel") 
-    alertsLabel.textContent = "Seed added to playlist" 
+    alertsLabel.innerHTML = `Seed <span class='orange'>${name}</span> added to playlist` 
 
+    /*
     //Clear checkboxes
     const seedQueueCheckboxes = document.getElementsByClassName("seed_id")
 
     for (let i = 0; i < seedQueueCheckboxes.length; i++) {
       seedQueueCheckboxes[i].checked = false
     }
+    */
   }) 
 }
 
@@ -379,26 +385,51 @@ function userProfileFetch() {
     seedsDiv.appendChild(seedExistingHeader)
 
     //Seeds DIVs
-    for (let i = 0; i < userData.seeds.length; i++) {
-      //console.log(`mod is: ${i%2}`)
 
+    //First set up the rows
+    for (let i = 0; i < Math.ceil(userData.seeds.length / 2); i++) {
       const seedRow = document.createElement("div")
       seedRow.setAttribute("class","row")
+      seedRow.setAttribute("id",`row_${i}`)
+      seedsDiv.appendChild(seedRow)
+    }
 
+    //Then set up the seeds themselves
+    for (let i = 0; i < userData.seeds.length; i++) {
+
+      const currentRow = document.getElementById(`row_${Math.floor(i/2)}`)
       const seedItem = document.createElement("div")
       seedItem.setAttribute("class","col-sm-5 seedItem")
+      //seedItem.setAttribute("id", userData.seeds[i].id)
       
+      //Top spacer
+      const seedTop = document.createElement("p")
+      seedTop.setAttribute("class","label")
+      seedTop.innerHTML = " "
+      seedItem.appendChild(seedTop)
+
       //Seed matrix
       createMatrix(userData.seeds[i].matrix,seedItem,4,20,false,5,2)
 
-      //Seed name
+      //Seed name / button
+      const seedSubmitButton = document.createElement("button")
+      seedSubmitButton.setAttribute("id", userData.seeds[i].id)
+      seedSubmitButton.setAttribute("class", "button")
+      seedSubmitButton.textContent = userData.seeds[i].name
+      seedSubmitButton.addEventListener("click", (e) => seedQueueHandler(e))
+      seedItem.appendChild(seedSubmitButton) 
+
+      /*
       const seedHeader = document.createElement("p")
       seedHeader.setAttribute("class","label")
       seedHeader.textContent = `${userData.seeds[i].name}`
       seedItem.appendChild(seedHeader)
 
-      seedRow.appendChild(seedItem)
-      seedsDiv.appendChild(seedRow)
+      //Add event listener   
+      seedItem.addEventListener("click", (e) => seedQueueHandler(e))
+      */
+
+      currentRow.appendChild(seedItem)
     }
 
     /*
@@ -412,15 +443,14 @@ function userProfileFetch() {
       seedItem.appendChild(seedCheck)
       seedsDiv.appendChild(seedItem)
     }
-    */
+
 
     const seedQueueButton = document.createElement("button")
     seedQueueButton.setAttribute("id", "seedQueueBtn")
     seedQueueButton.textContent = "Queue"
     seedsDiv.appendChild(seedQueueButton)    
+    */
 
-    //Add event listener   
-    seedQueueButton.addEventListener("click", (e) => seedQueueHandler(e))
   })
 }
 
