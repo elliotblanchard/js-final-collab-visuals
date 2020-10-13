@@ -174,27 +174,31 @@ function buildPage() {
 }
 
 function loginFormHandler(e) {
+
   if (e.path[0].id == "logout") {
     localStorage.removeItem('jwt_token') //to logout, everything handled on the frontend
     console.log("Logging out")
     buildPage()
   }
-  else if (e.path[0].id == "createLink") {
+  else if (e.path[1].id == "createLink") {
     //Swap to create an account form
     const loginDiv = document.getElementById("login")    
 
     const adminHeader = document.createElement("p")
+    adminHeader.setAttribute("class","label")
     adminHeader.textContent = "Admin?" 
 
     const adminCheck = document.createElement("INPUT")
     adminCheck.setAttribute("type", "checkbox")
+    adminCheck.setAttribute("class", "check")
     adminCheck.setAttribute("id", "adminField")
 
     adminHeader.appendChild(adminCheck)
     loginDiv.appendChild(adminHeader)    
 
     const loginButton = document.getElementById("loginBtn")
-    loginButton.textContent = "Create Account"
+    loginButton.setAttribute("class","button")
+    loginButton.textContent = "Create"
 
   }
   else {
@@ -403,10 +407,12 @@ function userProfileFetch() {
     headerDiv.appendChild(logout)   
 
     //Existing seeds header
-    const seedExistingHeader = document.createElement("p") 
-    seedExistingHeader.setAttribute("class", "heavy")
-    seedExistingHeader.innerHTML = "<span class='red'>Choose</span> one of your visual seeds to send to the big screen." 
-    seedsDiv.appendChild(seedExistingHeader)
+    if (userData.seeds.length >0) {
+      const seedExistingHeader = document.createElement("p") 
+      seedExistingHeader.setAttribute("class", "heavy")
+      seedExistingHeader.innerHTML = "<span class='red'>Choose</span> one of your visual seeds to send to the big screen." 
+      seedsDiv.appendChild(seedExistingHeader)
+    }
 
     //Seeds DIVs
 

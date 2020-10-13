@@ -93,6 +93,15 @@ body {
   font-size: 16px;    
 }
 
+.check {
+  width: 25px;
+  height: 15px;
+  background: #555;
+  margin: 5px 5px;
+  position: relative;
+  border-radius: 5px;
+}
+
 .button {
   border: 1px solid #f7ab30; 
   background-color: #222;
