@@ -182,22 +182,25 @@ function loginFormHandler(e) {
   }
   else if (e.path[1].id == "createLink") {
     //Swap to create an account form
-    const loginDiv = document.getElementById("login")    
-
-    const adminHeader = document.createElement("p")
-    adminHeader.setAttribute("class","label")
-    adminHeader.textContent = "Admin?" 
-
-    const adminCheck = document.createElement("INPUT")
-    adminCheck.setAttribute("type", "checkbox")
-    adminCheck.setAttribute("class", "check")
-    adminCheck.setAttribute("id", "adminField")
-
-    adminHeader.appendChild(adminCheck)
-    loginDiv.appendChild(adminHeader)    
-
+    const loginDiv = document.getElementById("login")  
+    
     const loginButton = document.getElementById("loginBtn")
-    loginButton.setAttribute("class","button")
+    loginButton.setAttribute("class","button")    
+
+    if (loginButton.textContent != "Create") {
+      const adminHeader = document.createElement("p")
+      adminHeader.setAttribute("class","label")
+      adminHeader.textContent = "Admin?" 
+
+      const adminCheck = document.createElement("INPUT")
+      adminCheck.setAttribute("type", "checkbox")
+      adminCheck.setAttribute("class", "check")
+      adminCheck.setAttribute("id", "adminField")
+
+      adminHeader.appendChild(adminCheck)
+      loginDiv.appendChild(adminHeader)  
+    }  
+
     loginButton.textContent = "Create"
 
   }
