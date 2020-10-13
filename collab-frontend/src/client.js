@@ -25,7 +25,7 @@ function buildPage() {
 
     //Build alert DIV
     const alertsDiv = document.createElement("div")
-    alertsDiv.setAttribute("id", "alerts")  
+    alertsDiv.setAttribute("id", "alerts") 
     const alertsLabel = document.createElement("p") 
     alertsLabel.setAttribute("id", "alertsLabel")
     alertsLabel.textContent = "" 
@@ -112,36 +112,59 @@ function buildPage() {
     const loginDiv = document.createElement("div")
     loginDiv.setAttribute("id", "login")
     const loginHeader = document.createElement("p")
-    loginHeader.textContent = "Please login or "
+    loginHeader.setAttribute("class","heavy")
+    loginHeader.innerHTML = "Please login<br>or "
     loginDiv.appendChild(loginHeader)  
     const createLink = document.createElement("a")
     createLink.setAttribute("id", "createLink")
     createLink.setAttribute("href", "#")
-    createLink.text = "create an account."
+    createLink.innerHTML = "<span class='red'>create an account.</span>"
     loginHeader.appendChild(createLink)
+
+    //Build alert DIV
+    const alertsDiv = document.createElement("div")
+    alertsDiv.setAttribute("id", "alerts")  
+    const alertsLabel = document.createElement("p") 
+    alertsLabel.setAttribute("id", "alertsLabel")
+    alertsLabel.textContent = "" 
+    alertsDiv.appendChild(alertsLabel)   
+    loginDiv.appendChild(alertsDiv)
+
     const usernameLabel = document.createElement("p") 
+    usernameLabel.setAttribute("class","label")
     usernameLabel.textContent = "Username" 
     loginDiv.appendChild(usernameLabel) 
     const username = document.createElement("INPUT")
     username.setAttribute("type", "text")
     username.setAttribute("id", "usernameField")
+    username.setAttribute("class","input")
     loginDiv.appendChild(username)
     const passwordLabel = document.createElement("p") 
+    passwordLabel.setAttribute("class","label")
     passwordLabel.textContent = "Password" 
     loginDiv.appendChild(passwordLabel) 
     const password = document.createElement("INPUT")
+    password.setAttribute("class", "input")
     password.setAttribute("type", "password")
     password.setAttribute("id", "passwordField")
     loginDiv.appendChild(password)
+    const loginButton = document.createElement("button")
+    loginButton.setAttribute("class", "button")
+    loginButton.setAttribute("id", "loginBtn")
+    loginButton.textContent = "Login"
+    loginDiv.appendChild(loginButton)
     main[0].appendChild(loginDiv)
 
+    /*
     const loginButtonsDiv = document.createElement("div")
     loginButtonsDiv.setAttribute("id", "loginButtons")
     const loginButton = document.createElement("button")
+    loginButton.setAttribute("class", "button")
     loginButton.setAttribute("id", "loginBtn")
     loginButton.textContent = "Login"
     loginButtonsDiv.appendChild(loginButton)
     main[0].appendChild(loginButtonsDiv)
+    */
 
     //Add event listeners
     createLink.addEventListener("click", (e) => loginFormHandler(e))
@@ -182,12 +205,13 @@ function loginFormHandler(e) {
 
     if ( (usernameInput.length < 4) || (pwInput.length < 6) ) {
       if (usernameInput.length < 4) {
-        errorMsg += "Username must be at least <span class='orange'>4 characters</span> long."
+        errorMsg += "Username must be at least <span class='orange'>4 characters</span> long.<br>"
       }
       if (pwInput.length < 6) {
         errorMsg += "Password must be at least <span class='orange'>6 characters</span> long."
       }
       const alertsLabel = document.getElementById("alertsLabel") 
+      //alertsLabel.setAttribute("class","alert")
       alertsLabel.innerHTML = errorMsg 
     }
     else {
@@ -414,7 +438,7 @@ function userProfileFetch() {
       //Seed name / button
       const seedSubmitButton = document.createElement("button")
       seedSubmitButton.setAttribute("id", userData.seeds[i].id)
-      seedSubmitButton.setAttribute("class", "button")
+      seedSubmitButton.setAttribute("class", "buttonPanel")
       seedSubmitButton.textContent = userData.seeds[i].name
       seedSubmitButton.addEventListener("click", (e) => seedQueueHandler(e))
       seedItem.appendChild(seedSubmitButton) 

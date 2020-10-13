@@ -57,11 +57,15 @@ body {
  */
 
 .header-light {
-  font-family: 'Chivo Light';font-size: 15px
+  font-family: 'Chivo Light';
+  font-size: 15px
 }
 
 .alert {
-  font-size: 17px
+  margin-left: 0px;
+  font-family: 'Chivo';
+  font-size: 15px;
+  line-height: 15px
 }
 
 .label {
@@ -90,6 +94,20 @@ body {
 }
 
 .button {
+  border: 1px solid #f7ab30; 
+  background-color: #222;
+  color: #f7ab30;
+  outline: none;
+  padding: 6px 20px;
+  margin: 0px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-family: 'Chivo Black';
+  font-size: 16px;
+}
+
+.buttonPanel {
   border: 1px solid #f7ab30; 
   background-color: #222;
   color: #f7ab30;
