@@ -184,7 +184,31 @@
 
 				setSeed(seed) {
 					this._currentSeed = seed
-					//console.log(`Current seed is: ${this._currentSeed.id}`)
+					console.log(`Current seed is: ${this._currentSeed.matrix}`)
+				}
+
+				applySeed() {
+					console.log("In apply seed")
+					//main loop: loop through _cellsMatrix in blocks of 16 (the size of a seed)
+					for (let i = 0; i < this._cellsMatrix.length; i=i+16) {
+						//inner loop A: 4 part loop for each row
+						let blockCount = 1
+						for (let j = i; j < (i+16); j=j+4) {
+							//inner loop B: 4 part loop for each cell in a row
+							for (let k = j; k < (j+4); k++) {
+								//each cell: matrix definition
+								//but for now, each cell gets a seperate hue (in steps of .0625)
+								//just to see what's going on
+								console.log(1.0 / blockCount)
+								this._cellsMatrix[k].hue = (1.0 / blockCount)
+								this._cellsMatrix[k].sat = 1.0
+								this._cellsMatrix[k].lum = 0.5
+								this._cellsMatrix[k].age = 0
+								this._cellsMatrix[k].material.emissive.setHSL(this._cellsMatrix[i].hue, this._cellsMatrix[i].sat, this._cellsMatrix[i].lum)
+								blockCount++
+							}
+						}
+					}
 				}
 
 				/*
@@ -399,7 +423,8 @@
 				
 				scene = new THREE.Scene();
 
-				CellEcosystem.cellEcosystem = new CellEcosystem(50,15,2,100);				
+				CellEcosystem.cellEcosystem = new CellEcosystem(48,15,2,100); //Dimension should be multiple of 4
+				//constructor(gridDimension,cellDimension,cellDepth,cellLife)				
 
 				/*
 				// Materials (this needs to be moved into the class - and the materials array)
@@ -540,22 +565,22 @@
 
 			}
 
+			//These are keyboard commands for testing
 			document.addEventListener('keydown', function(event) {
-				if (event.code == 'KeyR') {
-					
-					CellEcosystem.cellEcosystem.randomColor(0.75);
-
-				}
 				if (event.code == 'KeyA') {
-					
 					CellEcosystem.cellEcosystem.ageCells();
-
-				}				
+				}
+				if (event.code == 'KeyR') {
+					CellEcosystem.cellEcosystem.randomColor(0.75);
+				}	
+				if (event.code == 'KeyS') {
+					CellEcosystem.cellEcosystem.applySeed()
+				}							
 			});	
 
 			//Timed actions
-			let pulseVar = setInterval(bpmPulse, 750); //Interval to add seed	
-			let ageVar = setInterval(ageInt, 42); //Interval to age ceels - roughly 24 FPS
+			//let pulseVar = setInterval(bpmPulse, 750); //Interval to add seed	
+			//let ageVar = setInterval(ageInt, 42); //Interval to age ceels - roughly 24 FPS
 			let playlistVar = setInterval(playlistFetch, 10000); //Interval to fetch new seed
 
 			function bpmPulse() {
