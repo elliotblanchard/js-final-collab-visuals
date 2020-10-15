@@ -184,7 +184,6 @@
 
 				setSeed(seed) {
 					this._currentSeed = seed
-					console.log(`Current seed is: ${this._currentSeed.matrix}`)
 				}
 
 				/*
@@ -196,25 +195,30 @@
 				*/
 				
 				applySeed() {
-					//console.log(`Grid dimension is: ${this._gridDimension}`)
+					console.log(`Current seed is: ${this._currentSeed.name} ${this._currentSeed.matrix}`)
+					//Stamps the seed across the entire matrix
 					for (let h = 0; h < this._cellsMatrix.length; h=h+(this._gridDimension*4) ) {
 						for (let i = h; i < (h+this._gridDimension); i=i+4) {
 							//inner loop A: 4 part loop for each row
-							let blockCount = 1
+							let blockCount = 0
 							for (let j = 0; j < 4; j++) {
 								//inner loop B: 4 part loop for each cell in a row
 								for (let k = 0; k < 4; k++) {
+									//console.log(`blockCount is: ${blockCount}`)
+									//console.log(`seed digit is: ${this._currentSeed.matrix[blockCount]}`)
 									//each cell: matrix definition
 									//but for now, each cell gets a seperate hue (in steps of .0625)
 									//just to see what's going on
-									//This works for the first row, but then it starts overwriting already
-									//created cells on the next row. Need a way to skip 4 rows down at end of row?
-									//May need another nested loop
 									let currentIndex = (i+(j*this._gridDimension))+k
 									//console.log(`Current index is ${currentIndex}`)
-									this._cellsMatrix[currentIndex].hue = (1.0 / j)
-									this._cellsMatrix[currentIndex].sat = (1.0 / k)
-									this._cellsMatrix[currentIndex].lum = (0.75 / k)
+									this._cellsMatrix[currentIndex].hue = Math.random()
+									this._cellsMatrix[currentIndex].sat = 0.0
+									if (this._currentSeed.matrix[blockCount] == "1") {
+										this._cellsMatrix[currentIndex].lum = this.randomRange(0.5,1.0)
+									}
+									else {
+										this._cellsMatrix[currentIndex].lum = 0.0
+									}
 									this._cellsMatrix[currentIndex].age = 0
 									this._cellsMatrix[currentIndex].material.emissive.setHSL(this._cellsMatrix[i].hue, this._cellsMatrix[i].sat, this._cellsMatrix[i].lum)
 									blockCount++
