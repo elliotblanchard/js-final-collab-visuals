@@ -174,7 +174,6 @@ function buildPage() {
 }
 
 function loginFormHandler(e) {
-
   if (e.path[0].id == "logout") {
     localStorage.removeItem('jwt_token') //to logout, everything handled on the frontend
     console.log("Logging out")

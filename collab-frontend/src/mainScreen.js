@@ -187,27 +187,40 @@
 					console.log(`Current seed is: ${this._currentSeed.matrix}`)
 				}
 
+				/*
+				00 01 02 03 04 05 06 07
+				08 09 10 11 12 13 14 15
+				16 17 18 19 20 21 22 23
+				24 25 26 27 28 29 30 31
+				this._gridDimension
+				*/
+				
 				applySeed() {
-					console.log("In apply seed")
+					console.log(`Grid dimension is: ${this._gridDimension}`)
 					//main loop: loop through _cellsMatrix in blocks of 16 (the size of a seed)
-					for (let i = 0; i < this._cellsMatrix.length; i=i+16) {
+					for (let i = 0; i < this._cellsMatrix.length; i=i+4) {
 						//inner loop A: 4 part loop for each row
 						let blockCount = 1
-						for (let j = i; j < (i+16); j=j+4) {
+						for (let j = 0; j < 4; j++) {
 							//inner loop B: 4 part loop for each cell in a row
-							for (let k = j; k < (j+4); k++) {
+							for (let k = 0; k < 4; k++) {
 								//each cell: matrix definition
 								//but for now, each cell gets a seperate hue (in steps of .0625)
 								//just to see what's going on
-								console.log(1.0 / blockCount)
-								this._cellsMatrix[k].hue = (1.0 / blockCount)
-								this._cellsMatrix[k].sat = 1.0
-								this._cellsMatrix[k].lum = 0.5
-								this._cellsMatrix[k].age = 0
-								this._cellsMatrix[k].material.emissive.setHSL(this._cellsMatrix[i].hue, this._cellsMatrix[i].sat, this._cellsMatrix[i].lum)
+								//This works for the first row, but then it starts overwriting already
+								//created cells on the next row. Need a way to skip 4 rows down at end of row?
+								//May need another nested loop
+								let currentIndex = (i+(j*this._gridDimension))+k
+								console.log(`Current index is ${currentIndex}`)
+								this._cellsMatrix[currentIndex].hue = (1.0 / blockCount)
+								this._cellsMatrix[currentIndex].sat = 1.0
+								this._cellsMatrix[currentIndex].lum = 0.5
+								this._cellsMatrix[currentIndex].age = 0
+								this._cellsMatrix[currentIndex].material.emissive.setHSL(this._cellsMatrix[i].hue, this._cellsMatrix[i].sat, this._cellsMatrix[i].lum)
 								blockCount++
 							}
 						}
+						console.log("------")
 					}
 				}
 
