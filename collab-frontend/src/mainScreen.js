@@ -196,31 +196,32 @@
 				*/
 				
 				applySeed() {
-					console.log(`Grid dimension is: ${this._gridDimension}`)
-					//main loop: loop through _cellsMatrix in blocks of 16 (the size of a seed)
-					for (let i = 0; i < this._cellsMatrix.length; i=i+4) {
-						//inner loop A: 4 part loop for each row
-						let blockCount = 1
-						for (let j = 0; j < 4; j++) {
-							//inner loop B: 4 part loop for each cell in a row
-							for (let k = 0; k < 4; k++) {
-								//each cell: matrix definition
-								//but for now, each cell gets a seperate hue (in steps of .0625)
-								//just to see what's going on
-								//This works for the first row, but then it starts overwriting already
-								//created cells on the next row. Need a way to skip 4 rows down at end of row?
-								//May need another nested loop
-								let currentIndex = (i+(j*this._gridDimension))+k
-								console.log(`Current index is ${currentIndex}`)
-								this._cellsMatrix[currentIndex].hue = (1.0 / blockCount)
-								this._cellsMatrix[currentIndex].sat = 1.0
-								this._cellsMatrix[currentIndex].lum = 0.5
-								this._cellsMatrix[currentIndex].age = 0
-								this._cellsMatrix[currentIndex].material.emissive.setHSL(this._cellsMatrix[i].hue, this._cellsMatrix[i].sat, this._cellsMatrix[i].lum)
-								blockCount++
+					//console.log(`Grid dimension is: ${this._gridDimension}`)
+					for (let h = 0; h < this._cellsMatrix.length; h=h+(this._gridDimension*4) ) {
+						for (let i = h; i < (h+this._gridDimension); i=i+4) {
+							//inner loop A: 4 part loop for each row
+							let blockCount = 1
+							for (let j = 0; j < 4; j++) {
+								//inner loop B: 4 part loop for each cell in a row
+								for (let k = 0; k < 4; k++) {
+									//each cell: matrix definition
+									//but for now, each cell gets a seperate hue (in steps of .0625)
+									//just to see what's going on
+									//This works for the first row, but then it starts overwriting already
+									//created cells on the next row. Need a way to skip 4 rows down at end of row?
+									//May need another nested loop
+									let currentIndex = (i+(j*this._gridDimension))+k
+									//console.log(`Current index is ${currentIndex}`)
+									this._cellsMatrix[currentIndex].hue = (1.0 / j)
+									this._cellsMatrix[currentIndex].sat = (1.0 / k)
+									this._cellsMatrix[currentIndex].lum = (0.75 / k)
+									this._cellsMatrix[currentIndex].age = 0
+									this._cellsMatrix[currentIndex].material.emissive.setHSL(this._cellsMatrix[i].hue, this._cellsMatrix[i].sat, this._cellsMatrix[i].lum)
+									blockCount++
+								}
 							}
 						}
-						console.log("------")
+						//console.log("------")
 					}
 				}
 
