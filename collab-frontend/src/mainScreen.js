@@ -117,6 +117,8 @@
 					this._currentSeed;	
 					this._playingSeed;
 					this._blockNumber = 0;
+					this._rowNumber = 0;
+					this._blockCount = 0;
 					this._lumCutoff = 0.5; //Minimum luminance to be counted as a neighbor 
 
 					//Init the matrix (how do you return an object in a map)
@@ -197,8 +199,49 @@
 				*/
 				
 				applySeed() {
-					console.log(`Current seed is: ${this._currentSeed.name} ${this._currentSeed.matrix}`)
-					//Stamps the seed across the entire matrix
+					//console.log(`Current seed is: ${this._currentSeed.name} ${this._currentSeed.matrix}`)
+
+					if (!this._playingSeed) {
+						this._playingSeed = this._currentSeed
+					}
+
+					//Applies ONE 4x4 matrix 
+					for (let j = 0; j < 4; j++) {
+						//inner loop B: 4 part loop for each cell in a row
+						for (let k = 0; k < 4; k++) {
+							let currentIndex = (this._blockNumber+(j*this._gridDimension))+k
+							this._cellsMatrix[currentIndex].hue = Math.random()
+							this._cellsMatrix[currentIndex].sat = 0.0
+							if (this._playingSeed.matrix[this._blockCount] == "1") {
+								this._cellsMatrix[currentIndex].lum = this.randomRange(0.5,1.0)
+							}
+							else {
+								this._cellsMatrix[currentIndex].lum = 0.0
+							}
+							this._cellsMatrix[currentIndex].age = 0
+							this._cellsMatrix[currentIndex].material.emissive.setHSL(this._cellsMatrix[currentIndex].hue, this._cellsMatrix[currentIndex].sat, this._cellsMatrix[currentIndex].lum)
+							this._blockCount++
+						}
+					}	
+					if (this._blockCount == 16) {
+						this._blockCount = 0
+					}					
+					this._blockNumber = this._blockNumber + 4
+					console.log(`Row number is: ${this._rowNumber}`)
+					if (this._blockNumber == (this._rowNumber+this._gridDimension)) {
+						this._rowNumber = this._rowNumber+(this._gridDimension*4)
+						this._blockNumber = this._rowNumber
+						if (this._rowNumber == this._cellsMatrix.length) {
+							this._rowNumber = 0
+							this._playingSeed = this._currentSeed
+						}
+					}
+				}					
+
+					//this._currentSeed;	
+					//this._playingSeed;
+					//this._blockNumber = 0;
+					/*
 					for (let h = 0; h < this._cellsMatrix.length; h=h+(this._gridDimension*4) ) {
 						for (let i = h; i < (h+this._gridDimension); i=i+4) {
 							//inner loop A: 4 part loop for each row
@@ -215,7 +258,7 @@
 									//console.log(`Current index is ${currentIndex}`)
 									this._cellsMatrix[currentIndex].hue = Math.random()
 									this._cellsMatrix[currentIndex].sat = 0.0
-									if (this._currentSeed.matrix[blockCount] == "1") {
+									if (this._playingSeed.matrix[blockCount] == "1") {
 										this._cellsMatrix[currentIndex].lum = this.randomRange(0.5,1.0)
 									}
 									else {
@@ -227,9 +270,10 @@
 								}
 							}
 						}
+						this._playingSeed = this._currentSeed
 						//console.log("------")
-					}
-				}
+						*/
+
 
 				/*
 				setGeo(materials) {
@@ -259,12 +303,16 @@
 				}
 
 				ageCells() {
+					//Stamp a seed
+					this.applySeed()
+
 					//Updates cell ages for all active cells and dims their luminosity
 					//Also checks for neighbors to evolve system
 					//Should be map
 
 					//find # neighbors who have lum over a certian cutoff, update neighbors field in cell (need to add)
 					//grid counting starts at the BOTTOM and counts from LEFT to RIGHT
+					
 					for (let i = 0; i < this._cellsMatrix.length; i++) {
 						this._cellsMatrix[i]._neighbors = 0;
 						//North (i-dimension)
@@ -330,6 +378,7 @@
 						}
 						this._cellsMatrix[i].material.emissive.setHSL(this._cellsMatrix[i].hue, this._cellsMatrix[i].sat, this._cellsMatrix[i].lum);					
 					}
+					
 				}
 																	
 				/*
@@ -444,7 +493,19 @@
 				}	
 				set blockNumber(newBlockNumber) {
     				this._blockNumber = newBlockNumber;
-				}															 
+				}
+				get rowNumber() {
+					return this._rowNumber;
+				}	
+				set rowNumber(newRowNumber) {
+    				this._rowNumber = newRowNumber;
+				}				
+				get blockCount() {
+					return this._blockCount;
+				}	
+				set blockCount(newBlockCount) {
+    				this._blockCount = newBlockCount;
+				}																			 
 			}
 
 			CellEcosystem.cellEcosystem;
