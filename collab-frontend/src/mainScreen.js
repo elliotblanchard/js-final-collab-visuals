@@ -115,6 +115,8 @@
 					this._edges = { topRow: [], rightRow: [], bottomRow: [], leftRow: [] };	
 					this._cellsMatrix = Array(this.gridDimension ** 2);	
 					this._currentSeed;	
+					this._playingSeed;
+					this._blockNumber = 0;
 					this._lumCutoff = 0.5; //Minimum luminance to be counted as a neighbor 
 
 					//Init the matrix (how do you return an object in a map)
@@ -424,7 +426,25 @@
   				}		
 				set cellLife(newCellLife) {
     				this._cellLife = newCellLife;
- 				}					 	 				  		
+				}	
+				get currentSeed() {
+					return this._currentSeed;
+				}	
+				set currentSeed(newCurrentSeed) {
+    				this._currentSeed = newCurrentSeed;
+				}
+				get playingSeed() {
+					return this._playingSeed;
+				}	
+				set playingSeed(newPlayingSeed) {
+    				this._playingSeed = newPlayingSeed;
+				}	
+				get blockNumber() {
+					return this._blockNumber;
+				}	
+				set blockNumber(newBlockNumber) {
+    				this._blockNumber = newBlockNumber;
+				}															 
 			}
 
 			CellEcosystem.cellEcosystem;
@@ -436,7 +456,7 @@
 
 				camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 2000 );
 				camera.position.set( 0, 800, 0 );
-				camera.up = new THREE.Vector3(1,0,1);
+				camera.up = new THREE.Vector3(-0.5,0,-0.5);
 				camera.lookAt(new THREE.Vector3(0,0,0));
 				
 				scene = new THREE.Scene();
@@ -535,7 +555,7 @@
 				mesh.position.z = Math.floor( objects.length / cellEcosystem.gridDimension ) * (cellEcosystem.cellDimension*1.1) - 280;
 				
 				//mesh.rotation.x = 45;
-				//mesh.rotation.y = 0;
+				//mesh.rotation.y = 90;
 				//mesh.rotation.z = 45;
 
 				objects.push( mesh );

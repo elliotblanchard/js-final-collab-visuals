@@ -501,7 +501,7 @@ function nowPlayingFetch() {
       const nowPlayingData = json.seed.data
       
       if (user.getAttribute("data-user-id") == nowPlayingData.relationships.user.data.id ) {
-        alertsLabel.textContent = `Your seed named is: ${nowPlayingData.attributes.name} is now playing on the main screen.` 
+        alertsLabel.innerHTML = `Your seed named <span class='orange'>${nowPlayingData.attributes.name}</span> is now playing on the main screen.` 
       }
       else {
         alertsLabel.textContent = ``
