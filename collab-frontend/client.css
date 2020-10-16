@@ -134,14 +134,134 @@ body {
 }
 
 .seedItem {
-  margin-top: 30px;
-  margin-right: 15px;
-  margin-left: 15px;
+  margin-top: 20px;
+  margin-right: 10px;
+  margin-left: 10px;
   padding-top: 10px;
   text-align: center;
   outline-style: solid;
   outline-color: white;
   outline-width: 1px
+}
+
+.grid-container {
+  display: grid;
+  justify-content: center;
+  grid-template-columns: auto auto auto auto auto auto auto;
+  grid-template-rows: auto auto auto auto auto auto auto;
+  padding: 0px;
+}
+
+.item0 {
+  grid-column-start: 4;
+  grid-row-start: 1;
+  align-items: center;
+  justify-items: center;  
+}
+
+.item1 {
+  grid-column-start: 3;
+  grid-row-start: 2;
+  align-items: center;
+  justify-items: center;  
+}
+
+.item2 {
+  grid-column-start: 5;
+  grid-row-start: 2;
+  align-items: center;
+  justify-items: center;  
+}
+
+.item3 {
+  grid-column-start: 2;
+  grid-row-start: 3;
+  align-items: center;
+  justify-items: center;  
+}
+
+.item4 {
+  grid-column-start: 4;
+  grid-row-start: 3;
+  align-items: center;
+  justify-items: center;  
+}
+
+.item5 {
+  grid-column-start: 6;
+  grid-row-start: 3;
+  align-items: center;
+  justify-items: center;  
+}
+
+.item6 {
+  grid-column-start: 1;
+  grid-row-start: 4;
+  align-items: center;
+  justify-items: center;  
+}
+
+.item7 {
+  grid-column-start: 3;
+  grid-row-start: 4;
+  align-items: center;
+  justify-items: center;  
+}
+
+.item8 {
+  grid-column-start: 5;
+  grid-row-start: 4;
+  align-items: center;
+  justify-items: center;  
+}
+
+.item9 {
+  grid-column-start: 7;
+  grid-row-start: 4;
+  align-items: center;
+  justify-items: center;  
+}
+
+.item10 {
+  grid-column-start: 2;
+  grid-row-start: 5;
+  align-items: center;
+  justify-items: center;  
+}
+
+.item11 {
+  grid-column-start: 4;
+  grid-row-start: 5;
+  align-items: center;
+  justify-items: center;  
+}
+
+.item12 {
+  grid-column-start: 6;
+  grid-row-start: 5;
+  align-items: center;
+  justify-items: center;  
+}
+
+.item13 {
+  grid-column-start: 3;
+  grid-row-start: 6;
+  align-items: center;
+  justify-items: center;  
+}
+
+.item14 {
+  grid-column-start: 5;
+  grid-row-start: 6;
+  align-items: center;
+  justify-items: center;  
+}
+
+.item15 {
+  grid-column-start: 4;
+  grid-row-start: 7;
+  align-items: center;
+  justify-items: center;  
 }
 
 .masthead {

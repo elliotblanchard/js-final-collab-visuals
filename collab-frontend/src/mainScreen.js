@@ -233,7 +233,7 @@
 							if (this._applyToggle == true) {
 								this._applyToggle = false
 							}
-							else {
+							else {cd
 								this._applyToggle = true
 							}
 							this._playingSeed = this._currentSeed

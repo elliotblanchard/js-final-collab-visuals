@@ -235,14 +235,14 @@ function loginFormHandler(e) {
 }
 
 function matrixManager(e) {
-  //console.log(e.path[2].getAttribute("id").split("_")[1])
-  if (e.path[2].getAttribute("class") == "unselected") {
+  //console.log(e.path[2].getAttribute("class").split(" "))
+  if (e.path[2].getAttribute("class").split(" ")[0] == "unselected") {
     e.path[2].innerHTML = circ(true,20,48,25,5) 
-    e.path[2].setAttribute("class","selected")
+    e.path[2].setAttribute("class",`selected ${e.path[2].getAttribute("class").split(" ")[1]}`)
   }
   else {
     e.path[2].innerHTML = circ(false,20,48,25,5)
-    e.path[2].setAttribute("class","unselected")    
+    e.path[2].setAttribute("class",`unselected ${e.path[2].getAttribute("class").split(" ")[1]}`)    
   }
 }
 
@@ -520,6 +520,81 @@ function createMatrix(matrix,parentDiv,circRadius,heightWidth,interactive,center
     //const unselectedCirc = `<svg class='unselected' height='${heightWidth}' width='${heightWidth}'><circle cx='25' cy='25' r='${circRadius}' stroke='white' stroke-width='5' fill='#222' /></svg>`
     //const selectedCirc = `<svg class='selected' height='${heightWidth}' width='${heightWidth}'><circle cx='25' cy='25' r='${circRadius}' stroke='white' stroke-width='5' fill='white' /></svg>`
 
+    /*
+    const seed1 = document.createElement("DIV")
+    seed1.setAttribute("class","item1")
+    seed1.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
+    matrixTable.appendChild(seed1)   
+
+    const seed2 = document.createElement("DIV")
+    seed2.setAttribute("class","item2")
+    seed2.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
+    matrixTable.appendChild(seed2)
+    
+    const seed3 = document.createElement("DIV")
+    seed3.setAttribute("class","item3")
+    seed3.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
+    matrixTable.appendChild(seed3)  
+    
+    const seed4 = document.createElement("DIV")
+    seed4.setAttribute("class","item4")
+    seed4.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
+    matrixTable.appendChild(seed4)   
+
+    const seed5 = document.createElement("DIV")
+    seed5.setAttribute("class","item5")
+    seed5.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
+    matrixTable.appendChild(seed5)
+    
+    const seed6 = document.createElement("DIV")
+    seed6.setAttribute("class","item6")
+    seed6.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
+    matrixTable.appendChild(seed6)  
+    
+    const seed7 = document.createElement("DIV")
+    seed7.setAttribute("class","item7")
+    seed7.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
+    matrixTable.appendChild(seed7)  
+    
+    const seed8 = document.createElement("DIV")
+    seed8.setAttribute("class","item8")
+    seed8.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
+    matrixTable.appendChild(seed8)   
+
+    const seed9 = document.createElement("DIV")
+    seed9.setAttribute("class","item9")
+    seed9.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
+    matrixTable.appendChild(seed9)
+    
+    const seed10 = document.createElement("DIV")
+    seed10.setAttribute("class","item10")
+    seed10.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
+    matrixTable.appendChild(seed10)  */
+    
+    const matrixTable = document.createElement("DIV")
+    matrixTable.setAttribute("id","matrixTable")
+    matrixTable.setAttribute("class","grid-container")
+
+    for (let j = 0; j < 16; j++) {
+      const cell = document.createElement("DIV")
+      cell.setAttribute("id",`cell_${j}`)
+      if (matrix[j] == "1") {
+        cell.setAttribute("class",`selected item${j}`)
+        cell.innerHTML = circ(true,circRadius,heightWidth,center,thickness)
+      }
+      else {
+        cell.setAttribute("class",`unselected item${j}`)
+        cell.innerHTML = circ(false,circRadius,heightWidth,center,thickness)            
+      }
+      if (interactive == true) {
+        //Add event listeners    
+        cell.addEventListener("click", (e) => matrixManager(e))
+      }
+      matrixTable.appendChild(cell)
+    }   
+
+    parentDiv.appendChild(matrixTable)
+    /*
     const matrixTable = document.createElement("TABLE")
     matrixTable.setAttribute("id","matrixTable")
 
@@ -553,6 +628,7 @@ function createMatrix(matrix,parentDiv,circRadius,heightWidth,interactive,center
       matrixTable.appendChild(row)
     }
     parentDiv.appendChild(matrixTable)
+    */
 
 }
 
