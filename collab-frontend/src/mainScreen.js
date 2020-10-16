@@ -116,9 +116,8 @@
 					this._cellsMatrix = Array(this.gridDimension ** 2);	
 					this._currentSeed;	
 					this._playingSeed;
-					this._blockNumber = 0;
+					this.applyToggle = true;
 					this._rowNumber = 0;
-					this._blockCount = 0;
 					this._lumCutoff = 0.5; //Minimum luminance to be counted as a neighbor 
 
 					//Init the matrix (how do you return an object in a map)
@@ -199,30 +198,49 @@
 				*/
 				
 				applySeed() {
-					//console.log(`Current seed is: ${this._currentSeed.name} ${this._currentSeed.matrix}`)
-
-					if (!this._playingSeed) {
-						this._playingSeed = this._currentSeed
-					}
-
-					//Applies ONE 4x4 matrix 
-					for (let j = 0; j < 4; j++) {
-						//inner loop B: 4 part loop for each cell in a row
-						for (let k = 0; k < 4; k++) {
-							let currentIndex = (this._blockNumber+(j*this._gridDimension))+k
-							this._cellsMatrix[currentIndex].hue = Math.random()
-							this._cellsMatrix[currentIndex].sat = 0.0
-							if (this._playingSeed.matrix[this._blockCount] == "1") {
-								this._cellsMatrix[currentIndex].lum = this.randomRange(0.5,1.0)
+					if (this._currentSeed) {
+						if (!this._playingSeed) {
+							this._playingSeed = this._currentSeed
+						}
+						//Applies ONE row
+						for (let i = this._rowNumber; i < (this._rowNumber+this._gridDimension); i=i+4) {
+							//inner loop A: 4 part loop for each row
+							let blockCount = 0					
+							for (let j = 0; j < 4; j++) {
+								//inner loop B: 4 part loop for each cell in a row
+								for (let k = 0; k < 4; k++) {
+									let currentIndex = (i+(j*this._gridDimension))+k
+									if (this._applyToggle) {
+										//Only apply every other time so not so hectic
+										this._cellsMatrix[currentIndex].hue = Math.random()
+										this._cellsMatrix[currentIndex].sat = 0.0
+										if (this._playingSeed.matrix[blockCount] == "1") {
+											this._cellsMatrix[currentIndex].lum = this.randomRange(0.10,1.0)
+										}
+										else {
+											this._cellsMatrix[currentIndex].lum = 0.0
+										}
+										this._cellsMatrix[currentIndex].age = 0
+										this._cellsMatrix[currentIndex].material.emissive.setHSL(this._cellsMatrix[currentIndex].hue, this._cellsMatrix[currentIndex].sat, this._cellsMatrix[currentIndex].lum)
+									}
+									blockCount++
+								}
+							}	
+						}		
+						this._rowNumber = this._rowNumber+(this._gridDimension*4)
+						if (this._rowNumber == this._cellsMatrix.length) {
+							this._rowNumber = 0
+							if (this._applyToggle == true) {
+								this._applyToggle = false
 							}
 							else {
-								this._cellsMatrix[currentIndex].lum = 0.0
+								this._applyToggle = true
 							}
-							this._cellsMatrix[currentIndex].age = 0
-							this._cellsMatrix[currentIndex].material.emissive.setHSL(this._cellsMatrix[currentIndex].hue, this._cellsMatrix[currentIndex].sat, this._cellsMatrix[currentIndex].lum)
-							this._blockCount++
-						}
-					}	
+							this._playingSeed = this._currentSeed
+							console.log(`Current seed is: ${this._playingSeed.name} ${this._playingSeed.matrix}`)
+						}	
+					}
+					/*				
 					if (this._blockCount == 16) {
 						this._blockCount = 0
 					}					
@@ -236,6 +254,7 @@
 							this._playingSeed = this._currentSeed
 						}
 					}
+					*/
 				}					
 
 					//this._currentSeed;	
@@ -488,24 +507,12 @@
 				set playingSeed(newPlayingSeed) {
     				this._playingSeed = newPlayingSeed;
 				}	
-				get blockNumber() {
-					return this._blockNumber;
-				}	
-				set blockNumber(newBlockNumber) {
-    				this._blockNumber = newBlockNumber;
-				}
 				get rowNumber() {
 					return this._rowNumber;
 				}	
 				set rowNumber(newRowNumber) {
     				this._rowNumber = newRowNumber;
-				}				
-				get blockCount() {
-					return this._blockCount;
-				}	
-				set blockCount(newBlockCount) {
-    				this._blockCount = newBlockCount;
-				}																			 
+				}																						 
 			}
 
 			CellEcosystem.cellEcosystem;
@@ -679,7 +686,7 @@
 
 			//Timed actions
 			//let pulseVar = setInterval(bpmPulse, 750); //Interval to add seed	
-			//let ageVar = setInterval(ageInt, 42); //Interval to age ceels - roughly 24 FPS
+			let ageVar = setInterval(ageInt, 42); //Interval to age ceels - roughly 24 FPS
 			let playlistVar = setInterval(playlistFetch, 10000); //Interval to fetch new seed
 
 			function bpmPulse() {
