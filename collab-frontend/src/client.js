@@ -207,18 +207,20 @@ function seedFormHandler(e) {
   else {
     //Get seed definition from matrix
     const matrixTable = document.getElementById("matrixTable")
-    for (let i = 0; i < matrixTable.rows.length; i++) {
-      for (let j = 0; j < matrixTable.rows[i].cells.length; j++) {
-        if (matrixTable.rows[i].cells[j].getAttribute("class") == "unselected") {
-          matrixInput += "0"
-        }
-        else if (matrixTable.rows[i].cells[j].getAttribute("class") == "selected") {
-          matrixInput += "1"
-        }
+
+    console.log(matrixTable)
+
+    for (let i = 0; i < 16; i++) {
+      const currentCell = document.getElementById(`cell_${i}`)
+      if (currentCell.getAttribute("class").split(" ")[0] == "unselected") {
+        matrixInput += "0"
       }
+      else if (currentCell.getAttribute("class").split(" ")[0] == "selected") {
+        matrixInput += "1"
+      }      
     }
+
     //Submit to backend
-    //console.log("submitting")
     createSeedFetch(nameInput, matrixInput)
   }
 
