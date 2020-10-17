@@ -33,50 +33,7 @@ function buildPage() {
     seedsDiv.appendChild(alertsDiv)
 
     //Build matrix
-    createMatrix("0000000000000000",seedsDiv,20,48,true,25,5)
-    
-    /*
-    //Build matrix 
-    const unselectedCirc = "<svg class='unselected' height='48' width='48'><circle cx='25' cy='25' r='20' stroke='white' stroke-width='5' fill='#222' /></svg>"
-    const selectedCirc = "<svg class='selected' height='48' width='48'><circle cx='25' cy='25' r='20' stroke='white' stroke-width='5' fill='white' /></svg>"
-
-    const matrixTable = document.createElement("TABLE")
-    matrixTable.setAttribute("id","matrixTable")
-
-    const activeCells = [3,9,11,15,17,19,21,23,25,27,29,31,33,37,39,45]
-    let tableCell = 0
-    let matrixCell = 0
-    for (let i = 0; i < 7; i++) {
-      const row = document.createElement("TR")
-      for (let j = 0; j < 7; j++) {
-        const cell = document.createElement("TD")
-        if (activeCells.includes(tableCell)) {
-          cell.setAttribute("class","unselected")
-          cell.setAttribute("id",`cell_${matrixCell}`)
-          cell.innerHTML = unselectedCirc
-          matrixCell++
-          //Add event listeners    
-          cell.addEventListener("click", (e) => matrixManager(e))
-        }
-        row.appendChild(cell)
-        tableCell++
-      }
-      matrixTable.appendChild(row)
-    }
-    seedsDiv.appendChild(matrixTable)
-    */
-
-    /*
-    const matrixLabel = document.createElement("p") 
-    matrixLabel.setAttribute("class","label")
-    matrixLabel.textContent = "Matrix" 
-    seedsDiv.appendChild(matrixLabel) 
-    const matrix = document.createElement("INPUT")
-    matrix.setAttribute("type", "text")
-    matrix.setAttribute("class", "input")
-    matrix.setAttribute("id", "matrixField")
-    seedsDiv.appendChild(matrix)  
-    */   
+    createMatrix("0000000000000000",seedsDiv,20,48,true,25,5) 
 
     const nameLabel = document.createElement("p") 
     nameLabel.setAttribute("class","label")
@@ -150,21 +107,11 @@ function buildPage() {
     loginDiv.appendChild(password)
     const loginButton = document.createElement("button")
     loginButton.setAttribute("class", "button")
+    loginButton.setAttribute("type", "submit")
     loginButton.setAttribute("id", "loginBtn")
     loginButton.textContent = "Login"
     loginDiv.appendChild(loginButton)
     main[0].appendChild(loginDiv)
-
-    /*
-    const loginButtonsDiv = document.createElement("div")
-    loginButtonsDiv.setAttribute("id", "loginButtons")
-    const loginButton = document.createElement("button")
-    loginButton.setAttribute("class", "button")
-    loginButton.setAttribute("id", "loginBtn")
-    loginButton.textContent = "Login"
-    loginButtonsDiv.appendChild(loginButton)
-    main[0].appendChild(loginButtonsDiv)
-    */
 
     //Add event listeners
     createLink.addEventListener("click", (e) => loginFormHandler(e))
@@ -174,12 +121,13 @@ function buildPage() {
 }
 
 function loginFormHandler(e) {
-  if (e.path[0].id == "logout") {
+  console.log(e.srcElement.className)
+  if (e.srcElement.id == "logout") {
     localStorage.removeItem('jwt_token') //to logout, everything handled on the frontend
     console.log("Logging out")
     buildPage()
   }
-  else if (e.path[1].id == "createLink") {
+  else if (e.srcElement.className == "red") {
     //Swap to create an account form
     const loginDiv = document.getElementById("login")  
     
@@ -222,7 +170,7 @@ function loginFormHandler(e) {
     }
     else {
       //Submit to backend
-      if (e.path[0].textContent == "Login") {
+      if (e.srcElement.textContent == "Login") {
         loginFetch(usernameInput, pwInput)
       }
       else {
@@ -308,7 +256,7 @@ function loginFetch(username, password) {
   .then(response => response.json())
   .then(json => {
     localStorage.setItem('jwt_token', json.jwt)
-    renderToken()
+    //renderToken()
     buildPage()
   })
 }
@@ -325,7 +273,7 @@ function createUserFetch(username, password, admin) {
   .then(json => {
     localStorage.setItem('jwt_token', json.jwt)
     //incorporate browser cookie as stretch goal - one in cookie, one in local storage - more secure
-    renderToken()
+    //renderToken()
     buildPage()
   })
 }
