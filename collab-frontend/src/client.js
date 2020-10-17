@@ -182,14 +182,15 @@ function loginFormHandler(e) {
 }
 
 function matrixManager(e) {
-  //console.log(e.path[2].getAttribute("class").split(" "))
-  if (e.path[2].getAttribute("class").split(" ")[0] == "unselected") {
-    e.path[2].innerHTML = circ(true,20,48,25,5) 
-    e.path[2].setAttribute("class",`selected ${e.path[2].getAttribute("class").split(" ")[1]}`)
+  const parentDiv = e.srcElement.parentElement.parentElement
+  const parentClass = parentDiv.getAttribute("class").split(" ")
+  if (parentClass[0] == "unselected") {
+    parentDiv.innerHTML = circ(true,20,48,25,5) 
+    parentDiv.setAttribute("class",`selected ${parentClass[1]}`)
   }
   else {
-    e.path[2].innerHTML = circ(false,20,48,25,5)
-    e.path[2].setAttribute("class",`unselected ${e.path[2].getAttribute("class").split(" ")[1]}`)    
+    parentDiv.innerHTML = circ(false,20,48,25,5)
+    parentDiv.setAttribute("class",`unselected ${parentClass[1]}`)    
   }
 }
 
@@ -421,60 +422,6 @@ function renderToken() {
 function createMatrix(matrix,parentDiv,circRadius,heightWidth,interactive,center,thickness) {
 
     //Build matrix 
-    //const unselectedCirc = `<svg class='unselected' height='${heightWidth}' width='${heightWidth}'><circle cx='25' cy='25' r='${circRadius}' stroke='white' stroke-width='5' fill='#222' /></svg>`
-    //const selectedCirc = `<svg class='selected' height='${heightWidth}' width='${heightWidth}'><circle cx='25' cy='25' r='${circRadius}' stroke='white' stroke-width='5' fill='white' /></svg>`
-
-    /*
-    const seed1 = document.createElement("DIV")
-    seed1.setAttribute("class","item1")
-    seed1.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
-    matrixTable.appendChild(seed1)   
-
-    const seed2 = document.createElement("DIV")
-    seed2.setAttribute("class","item2")
-    seed2.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
-    matrixTable.appendChild(seed2)
-    
-    const seed3 = document.createElement("DIV")
-    seed3.setAttribute("class","item3")
-    seed3.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
-    matrixTable.appendChild(seed3)  
-    
-    const seed4 = document.createElement("DIV")
-    seed4.setAttribute("class","item4")
-    seed4.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
-    matrixTable.appendChild(seed4)   
-
-    const seed5 = document.createElement("DIV")
-    seed5.setAttribute("class","item5")
-    seed5.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
-    matrixTable.appendChild(seed5)
-    
-    const seed6 = document.createElement("DIV")
-    seed6.setAttribute("class","item6")
-    seed6.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
-    matrixTable.appendChild(seed6)  
-    
-    const seed7 = document.createElement("DIV")
-    seed7.setAttribute("class","item7")
-    seed7.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
-    matrixTable.appendChild(seed7)  
-    
-    const seed8 = document.createElement("DIV")
-    seed8.setAttribute("class","item8")
-    seed8.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
-    matrixTable.appendChild(seed8)   
-
-    const seed9 = document.createElement("DIV")
-    seed9.setAttribute("class","item9")
-    seed9.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
-    matrixTable.appendChild(seed9)
-    
-    const seed10 = document.createElement("DIV")
-    seed10.setAttribute("class","item10")
-    seed10.innerHTML = circ(false,circRadius,heightWidth,center,thickness) 
-    matrixTable.appendChild(seed10)  */
-    
     const matrixTable = document.createElement("DIV")
     matrixTable.setAttribute("id","matrixTable")
     matrixTable.setAttribute("class","grid-container")
@@ -498,50 +445,14 @@ function createMatrix(matrix,parentDiv,circRadius,heightWidth,interactive,center
     }   
 
     parentDiv.appendChild(matrixTable)
-    /*
-    const matrixTable = document.createElement("TABLE")
-    matrixTable.setAttribute("id","matrixTable")
-
-    const activeCells = [3,9,11,15,17,19,21,23,25,27,29,31,33,37,39,45]
-    let tableCell = 0
-    let matrixCell = 0
-
-    for (let i = 0; i < 7; i++) {
-      const row = document.createElement("TR")
-      for (let j = 0; j < 7; j++) {
-        const cell = document.createElement("TD")
-        if (activeCells.includes(tableCell)) {
-          cell.setAttribute("id",`cell_${matrixCell}`)
-          if (matrix[matrixCell] == "1") {
-            cell.setAttribute("class","selected")
-            cell.innerHTML = circ(true,circRadius,heightWidth,center,thickness)
-          }
-          else {
-            cell.setAttribute("class","unselected")
-            cell.innerHTML = circ(false,circRadius,heightWidth,center,thickness)            
-          }
-          matrixCell++
-          if (interactive == true) {
-            //Add event listeners    
-            cell.addEventListener("click", (e) => matrixManager(e))
-          }
-        }
-        row.appendChild(cell)
-        tableCell++
-      }
-      matrixTable.appendChild(row)
-    }
-    parentDiv.appendChild(matrixTable)
-    */
-
 }
 
 function circ(selected,circRadius,heightWidth,center,thickness) {
   if (selected == true) {
-    return `<svg class='selected' height='${heightWidth}' width='${heightWidth}'><circle cx='${center}' cy='${center}' r='${circRadius}' stroke='white' stroke-width='${thickness}' fill='white' /></svg>`
+    return `<svg height='${heightWidth}' width='${heightWidth}'><circle class='selected' cx='${center}' cy='${center}' r='${circRadius}' stroke='white' stroke-width='${thickness}' fill='white' /></svg>`
   }
   else {
-    return `<svg class='unselected' height='${heightWidth}' width='${heightWidth}'><circle cx='${center}' cy='${center}' r='${circRadius}' stroke='white' stroke-width='${thickness}' fill='#222' /></svg>`
+    return `<svg height='${heightWidth}' width='${heightWidth}'><circle class='unselected' cx='${center}' cy='${center}' r='${circRadius}' stroke='white' stroke-width='${thickness}' fill='#222' /></svg>`
   }
  }
 
