@@ -121,10 +121,9 @@ function buildPage() {
 }
 
 function loginFormHandler(e) {
-  console.log(e.srcElement.className)
+  //console.log(e.srcElement.className)
   if (e.srcElement.id == "logout") {
     localStorage.removeItem('jwt_token') //to logout, everything handled on the frontend
-    console.log("Logging out")
     buildPage()
   }
   else if (e.srcElement.className == "red") {
@@ -226,17 +225,6 @@ function seedFormHandler(e) {
 
 function seedQueueHandler(e) {
   playlistFetch(e.path[0].getAttribute("id"),e.path[0].textContent)
-
-  /*
-  //Get checkboxes that are checked
-  const seedQueueCheckboxes = document.getElementsByClassName("seed_id")
-
-  for (let i = 0; i < seedQueueCheckboxes.length; i++) {
-    if (seedQueueCheckboxes[i].checked == true) {
-      playlistFetch(seedQueueCheckboxes[i].id)
-    }
-  }
-  */
 }
 
 function clear() {   
@@ -312,15 +300,6 @@ function playlistFetch(seed_id,name) {
   .then(json => {
     const alertsLabel = document.getElementById("alertsLabel") 
     alertsLabel.innerHTML = `Seed <span class='orange'>${name}</span> added to playlist` 
-
-    /*
-    //Clear checkboxes
-    const seedQueueCheckboxes = document.getElementsByClassName("seed_id")
-
-    for (let i = 0; i < seedQueueCheckboxes.length; i++) {
-      seedQueueCheckboxes[i].checked = false
-    }
-    */
   }) 
 }
 
@@ -333,103 +312,80 @@ function userProfileFetch() {
   })
   .then(response => response.json())
   .then(json => {
-    const headerDiv = document.getElementById("header")
-    const userDiv = document.createElement("div")
-    const seedsDiv = document.getElementById("seeds")
-
-    const userData = json.user.data.attributes
-
-    //Add user name
-    const userHeader = document.createElement("p")
-    userHeader.setAttribute("id", "user")
-    userHeader.setAttribute("class", "header-light")
-    userHeader.setAttribute("data-user-id", json.user.data.id)
-    userHeader.innerHTML = `${userData.username} |&nbsp;`
-    headerDiv.appendChild(userHeader) 
-    
-    //Add logout link
-    const logout = document.createElement("a")
-    logout.setAttribute("class", "header-light")
-    logout.setAttribute("id", "logout")
-    logout.setAttribute("href", "#")
-    logout.innerHTML = "Logout"
-    logout.addEventListener("click", (e) => loginFormHandler(e))
-    headerDiv.appendChild(logout)   
-
-    //Existing seeds header
-    if (userData.seeds.length >0) {
-      const seedExistingHeader = document.createElement("p") 
-      seedExistingHeader.setAttribute("class", "heavy")
-      seedExistingHeader.innerHTML = "<span class='red'>Choose</span> one of your visual seeds to send to the big screen." 
-      seedsDiv.appendChild(seedExistingHeader)
+    if (json.message == "Please log in") {
+      localStorage.removeItem('jwt_token') //to logout, everything handled on the frontend
+      buildPage()
     }
+    else {
+      const headerDiv = document.getElementById("header")
+      const userDiv = document.createElement("div")
+      const seedsDiv = document.getElementById("seeds")
 
-    //Seeds DIVs
+      const userData = json.user.data.attributes
 
-    //First set up the rows
-    for (let i = 0; i < Math.ceil(userData.seeds.length / 2); i++) {
-      const seedRow = document.createElement("div")
-      seedRow.setAttribute("class","row")
-      seedRow.setAttribute("id",`row_${i}`)
-      seedsDiv.appendChild(seedRow)
-    }
-
-    //Then set up the seeds themselves
-    for (let i = 0; i < userData.seeds.length; i++) {
-
-      const currentRow = document.getElementById(`row_${Math.floor(i/2)}`)
-      const seedItem = document.createElement("div")
-      seedItem.setAttribute("class","col-sm-5 seedItem")
-      //seedItem.setAttribute("id", userData.seeds[i].id)
+      //Add user name
+      const userHeader = document.createElement("p")
+      userHeader.setAttribute("id", "user")
+      userHeader.setAttribute("class", "header-light")
+      userHeader.setAttribute("data-user-id", json.user.data.id)
+      userHeader.innerHTML = `${userData.username} |&nbsp;`
+      headerDiv.appendChild(userHeader) 
       
-      //Top spacer
-      const seedTop = document.createElement("p")
-      seedTop.setAttribute("class","label")
-      seedTop.innerHTML = " "
-      seedItem.appendChild(seedTop)
+      //Add logout link
+      const logout = document.createElement("a")
+      logout.setAttribute("class", "header-light")
+      logout.setAttribute("id", "logout")
+      logout.setAttribute("href", "#")
+      logout.innerHTML = "Logout"
+      logout.addEventListener("click", (e) => loginFormHandler(e))
+      headerDiv.appendChild(logout)   
 
-      //Seed matrix
-      createMatrix(userData.seeds[i].matrix,seedItem,4,20,false,5,2)
+      //Existing seeds header
+      if (userData.seeds.length >0) {
+        const seedExistingHeader = document.createElement("p") 
+        seedExistingHeader.setAttribute("class", "heavy")
+        seedExistingHeader.innerHTML = "<span class='red'>Choose</span> one of your visual seeds to send to the big screen." 
+        seedsDiv.appendChild(seedExistingHeader)
+      }
 
-      //Seed name / button
-      const seedSubmitButton = document.createElement("button")
-      seedSubmitButton.setAttribute("id", userData.seeds[i].id)
-      seedSubmitButton.setAttribute("class", "buttonPanel")
-      seedSubmitButton.textContent = userData.seeds[i].name
-      seedSubmitButton.addEventListener("click", (e) => seedQueueHandler(e))
-      seedItem.appendChild(seedSubmitButton) 
+      //Seeds DIVs
 
-      /*
-      const seedHeader = document.createElement("p")
-      seedHeader.setAttribute("class","label")
-      seedHeader.textContent = `${userData.seeds[i].name}`
-      seedItem.appendChild(seedHeader)
+      //First set up the rows
+      for (let i = 0; i < Math.ceil(userData.seeds.length / 2); i++) {
+        const seedRow = document.createElement("div")
+        seedRow.setAttribute("class","row")
+        seedRow.setAttribute("id",`row_${i}`)
+        seedsDiv.appendChild(seedRow)
+      }
 
-      //Add event listener   
-      seedItem.addEventListener("click", (e) => seedQueueHandler(e))
-      */
+      //Then set up the seeds themselves
+      for (let i = 0; i < userData.seeds.length; i++) {
 
-      currentRow.appendChild(seedItem)
+        const currentRow = document.getElementById(`row_${Math.floor(i/2)}`)
+        const seedItem = document.createElement("div")
+        seedItem.setAttribute("class","col-sm-5 seedItem")
+        //seedItem.setAttribute("id", userData.seeds[i].id)
+        
+        //Top spacer
+        const seedTop = document.createElement("p")
+        seedTop.setAttribute("class","label")
+        seedTop.innerHTML = " "
+        seedItem.appendChild(seedTop)
+
+        //Seed matrix
+        createMatrix(userData.seeds[i].matrix,seedItem,4,20,false,5,2)
+
+        //Seed name / button
+        const seedSubmitButton = document.createElement("button")
+        seedSubmitButton.setAttribute("id", userData.seeds[i].id)
+        seedSubmitButton.setAttribute("class", "buttonPanel")
+        seedSubmitButton.textContent = userData.seeds[i].name
+        seedSubmitButton.addEventListener("click", (e) => seedQueueHandler(e))
+        seedItem.appendChild(seedSubmitButton) 
+
+        currentRow.appendChild(seedItem)
+      }
     }
-
-    /*
-    for (let i = 0; i < userData.seeds.length; i++) {
-      const seedItem = document.createElement("p")
-      seedItem.textContent = `${userData.seeds[i].name} (${userData.seeds[i].matrix})`       
-      const seedCheck = document.createElement("INPUT")
-      seedCheck.setAttribute("type", "checkbox")
-      seedCheck.setAttribute("class", "seed_id")
-      seedCheck.setAttribute("id", userData.seeds[i].id)
-      seedItem.appendChild(seedCheck)
-      seedsDiv.appendChild(seedItem)
-    }
-
-
-    const seedQueueButton = document.createElement("button")
-    seedQueueButton.setAttribute("id", "seedQueueBtn")
-    seedQueueButton.textContent = "Queue"
-    seedsDiv.appendChild(seedQueueButton)    
-    */
 
   })
 }
