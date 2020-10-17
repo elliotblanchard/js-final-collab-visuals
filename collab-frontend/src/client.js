@@ -227,7 +227,7 @@ function seedFormHandler(e) {
 }
 
 function seedQueueHandler(e) {
-  playlistFetch(e.path[0].getAttribute("id"),e.path[0].textContent)
+  playlistFetch(e.srcElement.getAttribute("id"),e.srcElement.textContent)
 }
 
 function clear() {   
