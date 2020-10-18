@@ -477,24 +477,7 @@
 					//Submit to backend
 					loginFetch(usernameInput, pwInput)
 				  }
-			}
-			
-			function loginFetch(username, password) {
-				const bodyData = {user: { username, password} }
-			  
-				fetch(endPoint+"login", {
-				  method: "POST",
-				  headers: {"Content-Type": "application/json"},
-				  body: JSON.stringify(bodyData)
-				})
-				.then(response => response.json())
-				.then(json => {
-					if(json.user.data.attributes.admin) {
-				  		localStorage.setItem('jwt_token', json.jwt)
-					}
-					buildPage()
-				})
-			  }			
+			}		
 
 			function clear() {   
 				const body = document.getElementsByTagName("BODY")
@@ -613,11 +596,31 @@
 			function ageInt() {
 				CellEcosystem.cellEcosystem.ageCells()
 			}	
+
+			function loginFetch(username, password) {
+				const bodyData = {user: { username, password} }
+			  
+				fetch(endPoint+"login", {
+				  method: "POST",
+				  headers: {"Content-Type": "application/json"},
+				  body: JSON.stringify(bodyData)
+				})
+				.then(response => response.json())
+				.then(json => {
+					if(json.user.data.attributes.admin) {
+				  		localStorage.setItem('jwt_token', json.jwt)
+					}
+					buildPage()
+				})
+			}				
 			
 			function playlistFetch() {		
 				
 				fetch(endPoint+"playlists", {
 					method: 'GET',
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+					}					
 				  })
 				  .then(response => response.json())
 				  .then(json => {
@@ -646,11 +649,13 @@
 				  method: "POST",
 				  headers: {
 					"Content-Type": "application/json",
+					Authorization: `Bearer ${localStorage.getItem('jwt_token')}`					
 				  },
 				  body: JSON.stringify(bodyData)
 				})
 				.then(response => response.json())
 				.then(json => {
+					
 				})
 			}			
 			
