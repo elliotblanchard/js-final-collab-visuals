@@ -247,7 +247,6 @@ function loginFetch(username, password) {
   .then(response => response.json())
   .then(json => {
     localStorage.setItem('jwt_token', json.jwt)
-    //renderToken()
     buildPage()
   })
 }

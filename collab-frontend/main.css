@@ -8,6 +8,13 @@ body {
 	overscroll-behavior: none;
 }
 
+.center {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%); 
+  }
+
 a {
 	color: #ff0;
 	text-decoration: none;
@@ -50,7 +57,7 @@ a, button, input, select {
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-	z-index: 2 !important; /* TODO Solve this in HTML */
+	z-index: 2 !important; 
 }
 
 #overlay {

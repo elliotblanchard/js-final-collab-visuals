@@ -366,7 +366,140 @@
 				}																						 
 			}
 
-			CellEcosystem.cellEcosystem
+			document.addEventListener('DOMContentLoaded', () => {
+				buildPage()
+			  })
+
+			
+			function buildPage() {
+				clear()
+				if (localStorage.getItem('jwt_token') != undefined) {
+					//Already logged in	
+					CellEcosystem.cellEcosystem
+
+					//These are keyboard commands for testing
+					document.addEventListener('keydown', function(event) {
+						if (event.code == 'KeyA') {
+							CellEcosystem.cellEcosystem.ageCells()
+						}
+						if (event.code == 'KeyR') {
+							CellEcosystem.cellEcosystem.randomColor(0.75)
+						}	
+						if (event.code == 'KeyS') {
+							CellEcosystem.cellEcosystem.applySeed()
+						}							
+					});	
+	
+					//Timed actions
+					let ageVar = setInterval(ageInt, 42) //Interval to age ceels - roughly 24 FPS
+					let playlistVar = setInterval(playlistFetch, 10000) //Interval to fetch new seed
+	
+					/*
+					function bpmPulse() {
+						CellEcosystem.cellEcosystem.randomColor(0.75)
+					}
+					*/
+	
+					init()
+					animate()					
+				}	
+				else {
+					//Not logged in: need to login / create account
+
+					const body = document.getElementsByTagName("BODY")
+
+					const loginDiv = document.createElement("div")
+					loginDiv.setAttribute("id", "login")
+					loginDiv.setAttribute("class", "center")
+					const loginHeader = document.createElement("p")
+					loginHeader.setAttribute("class","heavy")
+					loginHeader.innerHTML = "<span class='red'>Collab Visuals:</span><br>creating together."
+					loginDiv.appendChild(loginHeader)  
+
+					//Build alert DIV
+					const alertsDiv = document.createElement("div")
+					alertsDiv.setAttribute("id", "alerts")  
+					const alertsLabel = document.createElement("p") 
+					alertsLabel.setAttribute("id", "alertsLabel")
+					alertsLabel.textContent = "" 
+					alertsDiv.appendChild(alertsLabel)   
+					loginDiv.appendChild(alertsDiv)
+
+					const usernameLabel = document.createElement("p") 
+					usernameLabel.setAttribute("class","label")
+					usernameLabel.textContent = "Username" 
+					loginDiv.appendChild(usernameLabel) 
+					const username = document.createElement("INPUT")
+					username.setAttribute("type", "text")
+					username.setAttribute("id", "usernameField")
+					username.setAttribute("class","input")
+					loginDiv.appendChild(username)
+					const passwordLabel = document.createElement("p") 
+					passwordLabel.setAttribute("class","label")
+					passwordLabel.textContent = "Password" 
+					loginDiv.appendChild(passwordLabel) 
+					const password = document.createElement("INPUT")
+					password.setAttribute("class", "input")
+					password.setAttribute("type", "password")
+					password.setAttribute("id", "passwordField")
+					loginDiv.appendChild(password)
+					const loginButton = document.createElement("button")
+					loginButton.setAttribute("class", "button")
+					loginButton.setAttribute("type", "submit")
+					loginButton.setAttribute("id", "loginBtn")
+					loginButton.textContent = "Login"
+					loginDiv.appendChild(loginButton)
+					body[0].appendChild(loginDiv)
+
+					//Add event listeners
+					loginButton.addEventListener("click", (e) => loginFormHandler(e))					
+				}		
+			}
+
+			function loginFormHandler(e) {
+				  //Check input fields
+				  let errorMsg = ""
+				  const usernameInput = document.getElementById("usernameField").value
+				  const pwInput = document.getElementById("passwordField").value
+			  
+				  if ( (usernameInput.length < 4) || (pwInput.length < 6) ) {
+					if (usernameInput.length < 4) {
+					  errorMsg += "Username must be at least <span class='orange'>4 characters</span> long.<br>"
+					}
+					if (pwInput.length < 6) {
+					  errorMsg += "Password must be at least <span class='orange'>6 characters</span> long."
+					}
+					const alertsLabel = document.getElementById("alertsLabel") 
+					//alertsLabel.setAttribute("class","alert")
+					alertsLabel.innerHTML = errorMsg 
+				  }
+				  else {
+					//Submit to backend
+					loginFetch(usernameInput, pwInput)
+				  }
+			}
+			
+			function loginFetch(username, password) {
+				const bodyData = {user: { username, password} }
+			  
+				fetch(endPoint+"login", {
+				  method: "POST",
+				  headers: {"Content-Type": "application/json"},
+				  body: JSON.stringify(bodyData)
+				})
+				.then(response => response.json())
+				.then(json => {
+					if(json.user.data.attributes.admin) {
+				  		localStorage.setItem('jwt_token', json.jwt)
+					}
+					buildPage()
+				})
+			  }			
+
+			function clear() {   
+				const body = document.getElementsByTagName("BODY")
+				body[0].innerHTML = ""
+			} 			
 
 			function init() {
 
@@ -475,30 +608,7 @@
 
 				renderer.render( scene, camera )
 
-			}
-
-			//These are keyboard commands for testing
-			document.addEventListener('keydown', function(event) {
-				if (event.code == 'KeyA') {
-					CellEcosystem.cellEcosystem.ageCells()
-				}
-				if (event.code == 'KeyR') {
-					CellEcosystem.cellEcosystem.randomColor(0.75)
-				}	
-				if (event.code == 'KeyS') {
-					CellEcosystem.cellEcosystem.applySeed()
-				}							
-			});	
-
-			//Timed actions
-			let ageVar = setInterval(ageInt, 42) //Interval to age ceels - roughly 24 FPS
-			let playlistVar = setInterval(playlistFetch, 10000) //Interval to fetch new seed
-
-			/*
-			function bpmPulse() {
-				CellEcosystem.cellEcosystem.randomColor(0.75)
-			}
-			*/	
+			}	
 
 			function ageInt() {
 				CellEcosystem.cellEcosystem.ageCells()
@@ -545,6 +655,5 @@
 			}			
 			
 			
-			init()
-			animate()							
+							
 		
