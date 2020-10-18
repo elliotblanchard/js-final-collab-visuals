@@ -28,7 +28,7 @@ function buildPage() {
     alertsDiv.setAttribute("id", "alerts") 
     const alertsLabel = document.createElement("p") 
     alertsLabel.setAttribute("id", "alertsLabel")
-    alertsLabel.textContent = "" 
+    alertsLabel.innerHTML = "&nbsp;<br>" 
     alertsDiv.appendChild(alertsLabel)   
     seedsDiv.appendChild(alertsDiv)
 
@@ -407,10 +407,10 @@ function nowPlayingFetch() {
       const nowPlayingData = json.seed.data
       
       if (user.getAttribute("data-user-id") == nowPlayingData.relationships.user.data.id ) {
-        alertsLabel.innerHTML = `Your seed named <span class='orange'>${nowPlayingData.attributes.name}</span> is now playing on the main screen.` 
+        alertsLabel.innerHTML = `Your seed <span class='orange'>${nowPlayingData.attributes.name}</span> is now playing` 
       }
       else {
-        alertsLabel.textContent = ``
+        alertsLabel.innerHTML = "&nbsp;<br>" 
       }
     } 
   })
