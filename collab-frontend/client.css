@@ -142,6 +142,10 @@ body {
   font-weight: 900;  
 }
 
+.buttonPanel:focus {
+  outline-color: #f7c981;
+}
+
 .seedItem {
   margin-top: 20px;
   margin-right: 10px;

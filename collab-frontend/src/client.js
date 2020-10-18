@@ -227,6 +227,7 @@ function seedFormHandler(e) {
 }
 
 function seedQueueHandler(e) {
+  e.srcElement.innerHTML = "Added"
   playlistFetch(e.srcElement.getAttribute("id"),e.srcElement.textContent)
 }
 
