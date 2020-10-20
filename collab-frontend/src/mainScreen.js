@@ -18,7 +18,7 @@
 				bloomRadius: 0.1
 			};		
 			
-			const endPoint = "http://localhost:3000/api/v1/"			
+			const endPoint = "http://collabvisuals.ngrok.io/api/v1/"			
 
 			//Define overall class for the cells matrix
 			class Cell {

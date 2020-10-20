@@ -1,4 +1,4 @@
-const endPoint = "http://localhost:3000/api/v1/"
+const endPoint = "http://collabvisuals.ngrok.io/api/v1/"
 const main = document.getElementsByTagName("main")
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -263,8 +263,7 @@ function createUserFetch(username, password, admin) {
   .then(response => response.json())
   .then(json => {
     localStorage.setItem('jwt_token', json.jwt)
-    //incorporate browser cookie as stretch goal - one in cookie, one in local storage - more secure
-    //renderToken()
+    renderToken()
     buildPage()
   })
 }
