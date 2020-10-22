@@ -21,6 +21,3 @@ Give the VJ more capabilities to change the rules driving the generative animati
 * A QUEUE that holds a list of seed to play. Has methods to add to queue?
 * A CELL ECOSYSTEM is the main generative matrix that creates the visuals. SEEDS create visuals according to the rules of the CELL ECOSYSTEM. The CELL ECOSYSTEM is a complex class inspired by John Horton Conway's 1970 Game of Life https://en.wikipedia.org/wiki/Conway's_Game_of_Life On it's most fundamental level, the CELL ECOSYSTEM contains and manages a matrix of CELLs to create the visual animations.
 * A CELL is an individual generative unit. It contains information on cell state including material, hue, saturation, luminance, age, and number of neighbors. 
-
-//  To-Do
-* Implement login on the main screen, so that 1) skip_before_action can be removed from playlists_conrollers + 2) Only admin accounts can launch the main screen
