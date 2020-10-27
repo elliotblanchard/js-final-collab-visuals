@@ -13,8 +13,4 @@ class Playlist < ApplicationRecord
         @@now_playing = id 
     end    
 
-    #playlist = Playlist.new()
-    #playlist.now_playing
-    #playlist.now_playing = 10
-
 end

@@ -105,25 +105,24 @@ function seedFormHandler(e) {
     errorMsg += "Name must be at least <span class='orange'>6 characters</span> long.";
     const alertsLabel = document.getElementById('alertsLabel');
     alertsLabel.innerHTML = errorMsg;
-  } else {
-    // Get seed definition from matrix
-
-    for (let i = 0; i < 16; i += 1) {
-      const currentCell = document.getElementById(`cell_${i}`);
-      if (currentCell.getAttribute('class').split(' ')[0] === 'unselected') {
-        matrixInput += '0';
-      } else if (currentCell.getAttribute('class').split(' ')[0] === 'selected') {
-        matrixInput += '1';
-      }
-    }
-
-    // Submit to backend
-    createSeedFetch(nameInput, matrixInput);
+    return;
   }
+  // Get seed definition from matrix
+
+  for (let i = 0; i < 16; i += 1) {
+    const currentCell = document.getElementById(`cell_${i}`);
+    if (currentCell.getAttribute('class').split(' ')[0] === 'unselected') {
+      matrixInput += '0';
+    } else if (currentCell.getAttribute('class').split(' ')[0] === 'selected') {
+      matrixInput += '1';
+    }
+  }
+
+  // Submit to backend
+  createSeedFetch(nameInput, matrixInput);
 }
 
 function loginFormHandler(e) {
-  // console.log(e.srcElement.className)
   if (e.srcElement.id === 'logout') {
     localStorage.removeItem('jwt_token'); // to logout, everything handled on the frontend
     // eslint-disable-next-line no-use-before-define
@@ -166,15 +165,15 @@ function loginFormHandler(e) {
       const alertsLabel = document.getElementById('alertsLabel');
       // alertsLabel.setAttribute("class","alert")
       alertsLabel.innerHTML = errorMsg;
-    } else {
-      // Submit to backend
-      if (e.srcElement.textContent == 'Login') {
-        loginFetch(usernameInput, pwInput);
-      } else {
-        const adminInput = document.getElementById('adminField').checked;
-        createUserFetch(usernameInput, pwInput, adminInput);
-      }
+      return;
     }
+    // Submit to backend
+    if (e.srcElement.textContent === 'Login') {
+      loginFetch(usernameInput, pwInput);
+      return;
+    }
+    const adminInput = document.getElementById('adminField').checked;
+    createUserFetch(usernameInput, pwInput, adminInput);
   }
 }
 
@@ -283,6 +282,18 @@ function userProfileFetch() {
         }
 
         // Then set up the seeds themselves
+        // Alphabetize seeds
+        userData.seeds.sort((a, b) => {
+          if (a.name < b.name) {
+            return -1;
+          }
+          if (a.name > b.name) {
+            return 1;
+          }
+          // names must be equal
+          return 0;
+        });
+
         for (let i = 0; i < userData.seeds.length; i += 1) {
           const currentRow = document.getElementById(`row_${Math.floor(i / 2)}`);
           const seedItem = document.createElement('div');

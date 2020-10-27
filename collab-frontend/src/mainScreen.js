@@ -508,7 +508,7 @@ function animate() {
 
 function buildPage() {
   clear();
-  if (localStorage.getItem('jwt_token') !== undefined) {
+  if (localStorage.getItem('jwt_token') !== null) {
     // Already logged in
     CellEcosystem.cellEcosystem;
 
