@@ -1,7 +1,7 @@
 # Collab Visuals: Create Together
-Collaborative visuals for virtual concerts.
-
 ![Collab Visuals](https://invisiblelightnetwork.com/wp-content/uploads/2020/10/UI_16x9_3-Up_940.jpg)
+
+Collaborative visuals for virtual concerts.
 
 ## Features :sparkles:
 * Fans create + share generative seeds, which drive visuals for the concert
