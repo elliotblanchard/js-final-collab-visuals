@@ -1,8 +1,10 @@
 # Collab Visuals: Create Together
 Collaborative visuals for virtual concerts.
 
+![Collab Visuals](https://invisiblelightnetwork.com/wp-content/uploads/2020/10/UI_16x9_3-Up_940.jpg)
+
 ## Features :sparkles:
-* Fans create + share visual seeds, which drive visuals for the concert
+* Fans create + share generative seeds, which drive visuals for the concert
 * Generative framework via cellular automata
 * Concert director controls real-time effects and tweaks
 * No app to download
@@ -18,6 +20,7 @@ Collaborative visuals for virtual concerts.
 * PostgreSQL DB
 
 ## Get Started
+Visit https://invisiblelightnetwork.com/2020/10/22/collab-visuals/ for more info
 
 ### Fork and clone Rails API backend:
 * git clone to your local directory
