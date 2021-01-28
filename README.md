@@ -4,7 +4,7 @@
 Collaborative visuals for virtual concerts.
 
 ## Features :sparkles:
-* Fans create + share generative seeds, which drive visuals for the concert
+* Fans create + share generative seeds, which drive concert visuals
 * Generative framework via cellular automata
 * Concert director controls real-time effects and tweaks
 * No app to download
@@ -14,7 +14,7 @@ Collaborative visuals for virtual concerts.
 ## Built With :eyes:
 * 100% JavaScript front end
 * [Three.js](https://threejs.org/) accelerated WebGL graphics
-* [Bootstrap] (https://getbootstrap.com/) CSS styling
+* [Bootstrap](https://getbootstrap.com/) CSS styling
 * Async requests via RESTful API calls
 * Rails backend
 * PostgreSQL DB
