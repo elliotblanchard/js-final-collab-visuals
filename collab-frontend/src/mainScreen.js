@@ -1,13 +1,13 @@
 /* eslint-disable import/extensions */
 /* eslint-disable no-underscore-dangle */
-// Three.js lib import
 import * as THREE from './build/three.module.js';
 import { GUI } from './jsm/libs/dat.gui.module.js';
 import { EffectComposer } from './jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './jsm/postprocessing/UnrealBloomPass.js';
 import CellEcosystem from './modules/CellEcosystem.js';
-import Seed from './modules/Seed.js';
+import buildMainLoginPage from './modules/buildMainLoginPage.js';
+import { playlistFetch } from './modules/mainSeedFetch.js';
 
 // Three.js
 let container;
@@ -25,7 +25,6 @@ const params = {
 };
 
 const endPoint = 'http://collabvisuals.ngrok.io/api/v1/';
-//const endPoint = 'http://localhost:3000/api/v1/'
 
 function clear() {
   const body = document.getElementsByTagName('BODY');
@@ -102,9 +101,6 @@ function init() {
     bloomPass.radius = Number(value);
   });
 
-  // stats = new Stats()
-  // container.appendChild( stats.dom )
-
   window.addEventListener('resize', onWindowResize, false);
 }
 
@@ -122,7 +118,6 @@ function animate() {
   requestAnimationFrame(animate);
 
   render();
-  // stats.update()
   composer.render();
 }
 
@@ -149,59 +144,11 @@ function buildPage() {
     const ageVar = setInterval(ageInt, 42); // Interval to age cells - roughly 24 FPS
     const playlistVar = setInterval(playlistFetch, 10000); // Interval to fetch new seed
 
-    // function bpmPulse() {
-    // CellEcosystem.cellEcosystem.randomColor(0.75)
-    // }
-
     init();
     animate();
   } else {
     // Not logged in: need to login / create account
-
-    const body = document.getElementsByTagName('BODY');
-
-    const loginDiv = document.createElement('div');
-    loginDiv.setAttribute('id', 'login');
-    loginDiv.setAttribute('class', 'center');
-    const loginHeader = document.createElement('p');
-    loginHeader.setAttribute('class', 'heavy');
-    loginHeader.innerHTML = "<span class='red'>Collab Visuals:</span><br>creating together.";
-    loginDiv.appendChild(loginHeader);
-
-    // Build alert DIV
-    const alertsDiv = document.createElement('div');
-    alertsDiv.setAttribute('id', 'alerts');
-    const alertsLabel = document.createElement('p');
-    alertsLabel.setAttribute('id', 'alertsLabel');
-    alertsLabel.textContent = '';
-    alertsDiv.appendChild(alertsLabel);
-    loginDiv.appendChild(alertsDiv);
-
-    const usernameLabel = document.createElement('p');
-    usernameLabel.setAttribute('class', 'label');
-    usernameLabel.textContent = 'Username';
-    loginDiv.appendChild(usernameLabel);
-    const username = document.createElement('INPUT');
-    username.setAttribute('type', 'text');
-    username.setAttribute('id', 'usernameField');
-    username.setAttribute('class', 'input');
-    loginDiv.appendChild(username);
-    const passwordLabel = document.createElement('p');
-    passwordLabel.setAttribute('class', 'label');
-    passwordLabel.textContent = 'Password';
-    loginDiv.appendChild(passwordLabel);
-    const password = document.createElement('INPUT');
-    password.setAttribute('class', 'input');
-    password.setAttribute('type', 'password');
-    password.setAttribute('id', 'passwordField');
-    loginDiv.appendChild(password);
-    const loginButton = document.createElement('button');
-    loginButton.setAttribute('class', 'button');
-    loginButton.setAttribute('type', 'submit');
-    loginButton.setAttribute('id', 'loginBtn');
-    loginButton.textContent = 'Login';
-    loginDiv.appendChild(loginButton);
-    body[0].appendChild(loginDiv);
+    const loginButton = buildMainLoginPage();
 
     // Add event listeners
     loginButton.addEventListener('click', (e) => loginFormHandler(e));
@@ -222,48 +169,6 @@ function loginFetch(username, password) {
         localStorage.setItem('jwt_token', json.jwt);
       }
       buildPage();
-    });
-}
-
-function nowplayingFetch(id) {
-  const bodyData = { playlist: { id } };
-
-  fetch(`${endPoint}nowplaying`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
-    },
-    body: JSON.stringify(bodyData),
-  })
-    .then((response) => response.json())
-    .then(() => {
-
-    });
-}
-
-function playlistFetch() {
-  fetch(`${endPoint}playlists`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
-    },
-  })
-    .then((response) => response.json())
-    .then((json) => {
-      // Put first seed info into cell ecosystem's current seed var
-      const firstSeed = json.playlist.data[0].attributes.seed;
-
-      const newSeed = new Seed(
-        firstSeed.id,
-        firstSeed.name,
-        firstSeed.matrix,
-        firstSeed.user_id,
-      );
-      CellEcosystem.cellEcosystem.setSeed(newSeed);
-
-      // Set playlist.now_playing = seed_id (needs new route) (also destroys seed from playlist)
-      nowplayingFetch(json.playlist.data[0].id);
     });
 }
 
@@ -288,17 +193,6 @@ function loginFormHandler(e) {
     loginFetch(usernameInput, pwInput);
   }
 }
-
-// function addMesh(geometry, material, cellEcosystem) {
-//  const mesh = new THREE.Mesh(geometry, material);
-//
-//  mesh.position.x = (objects.length % cellEcosystem.gridDimension) * (cellEcosystem.cellDimension * 1.1) - 280;
-//  mesh.position.z = Math.floor(objects.length / cellEcosystem.gridDimension) * (cellEcosystem.cellDimension * 1.1) - 280;
-//
-//  objects.push(mesh);
-//
-//  scene.add(mesh);
-// }
 
 function ageInt() {
   CellEcosystem.cellEcosystem.ageCells();
