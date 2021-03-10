@@ -142,7 +142,7 @@ function buildPage() {
 
     // Timed actions
     const ageVar = setInterval(ageInt, 42); // Interval to age cells - roughly 24 FPS
-    const playlistVar = setInterval(playlistFetch, 10000); // Interval to fetch new seed
+    const playlistVar = setInterval(playlistFetch(endPoint), 10000); // Interval to fetch new seed
 
     init();
     animate();

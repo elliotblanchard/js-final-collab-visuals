@@ -1,11 +1,8 @@
+/* eslint-disable no-use-before-define */
 const endPoint = 'http://collabvisuals.ngrok.io/api/v1/';
-//const endPoint = 'http://localhost:3000/api/v1/'
 
 const main = document.getElementsByTagName('main');
 
-function renderToken() {
-  console.log(localStorage.getItem('jwt_token'));
-}
 
 function playlistFetch(seed_id, name) {
   const bodyData = { playlist: { seed_id } };
@@ -51,7 +48,6 @@ function createUserFetch(username, password, admin) {
     .then((response) => response.json())
     .then((json) => {
       localStorage.setItem('jwt_token', json.jwt);
-      renderToken();
       buildPage();
     });
 }
@@ -98,6 +94,7 @@ function nowPlayingFetch() {
     });
 }
 
+
 function seedFormHandler(e) {
   let errorMsg = '';
   const nameInput = document.getElementById('nameField').value;
@@ -124,58 +121,64 @@ function seedFormHandler(e) {
   createSeedFetch(nameInput, matrixInput);
 }
 
+function createAccountForm() {
+  // Swap to create an account form
+  const loginDiv = document.getElementById('login');
+
+  const loginButton = document.getElementById('loginBtn');
+  loginButton.setAttribute('class', 'button');
+
+  if (loginButton.textContent !== 'Create') {
+    const adminHeader = document.createElement('p');
+    adminHeader.setAttribute('class', 'label');
+    adminHeader.textContent = 'Admin?';
+
+    const adminCheck = document.createElement('INPUT');
+    adminCheck.setAttribute('type', 'checkbox');
+    adminCheck.setAttribute('class', 'check');
+    adminCheck.setAttribute('id', 'adminField');
+
+    adminHeader.appendChild(adminCheck);
+    loginDiv.appendChild(adminHeader);
+  }
+
+  loginButton.textContent = 'Create';
+}
+
+function checkLoginInput(e) {
+  // Check input fields
+  let errorMsg = '';
+  const usernameInput = document.getElementById('usernameField').value;
+  const pwInput = document.getElementById('passwordField').value;
+
+  if ((usernameInput.length < 4) || (pwInput.length < 6)) {
+    if (usernameInput.length < 4) {
+      errorMsg += "Username must be at least <span class='orange'>4 characters</span> long.<br>";
+    }
+    if (pwInput.length < 6) {
+      errorMsg += "Password must be at least <span class='orange'>6 characters</span> long.";
+    }
+    const alertsLabel = document.getElementById('alertsLabel');
+    alertsLabel.innerHTML = errorMsg;
+  }
+
+  // Submit to backend
+  if (e.srcElement.textContent === 'Login') {
+    loginFetch(usernameInput, pwInput);
+    return;
+  }
+  const adminInput = document.getElementById('adminField').checked;
+  createUserFetch(usernameInput, pwInput, adminInput);
+}
+
 function loginFormHandler(e) {
   if (e.srcElement.id === 'logout') {
-    localStorage.removeItem('jwt_token'); // to logout, everything handled on the frontend
-    // eslint-disable-next-line no-use-before-define
+    localStorage.removeItem('jwt_token'); // logout
     buildPage();
   } else if (e.srcElement.className === 'red') {
-    // Swap to create an account form
-    const loginDiv = document.getElementById('login');
-
-    const loginButton = document.getElementById('loginBtn');
-    loginButton.setAttribute('class', 'button');
-
-    if (loginButton.textContent !== 'Create') {
-      const adminHeader = document.createElement('p');
-      adminHeader.setAttribute('class', 'label');
-      adminHeader.textContent = 'Admin?';
-
-      const adminCheck = document.createElement('INPUT');
-      adminCheck.setAttribute('type', 'checkbox');
-      adminCheck.setAttribute('class', 'check');
-      adminCheck.setAttribute('id', 'adminField');
-
-      adminHeader.appendChild(adminCheck);
-      loginDiv.appendChild(adminHeader);
-    }
-
-    loginButton.textContent = 'Create';
+    createAccountForm();
   } else {
-    // Check input fields
-    let errorMsg = '';
-    const usernameInput = document.getElementById('usernameField').value;
-    const pwInput = document.getElementById('passwordField').value;
-
-    if ((usernameInput.length < 4) || (pwInput.length < 6)) {
-      if (usernameInput.length < 4) {
-        errorMsg += "Username must be at least <span class='orange'>4 characters</span> long.<br>";
-      }
-      if (pwInput.length < 6) {
-        errorMsg += "Password must be at least <span class='orange'>6 characters</span> long.";
-      }
-      const alertsLabel = document.getElementById('alertsLabel');
-      // alertsLabel.setAttribute("class","alert")
-      alertsLabel.innerHTML = errorMsg;
-      return;
-    }
-    // Submit to backend
-    if (e.srcElement.textContent === 'Login') {
-      loginFetch(usernameInput, pwInput);
-      return;
-    }
-    const adminInput = document.getElementById('adminField').checked;
-    createUserFetch(usernameInput, pwInput, adminInput);
+    checkLoginInput(e);
   }
 }
 
@@ -229,6 +232,88 @@ function createMatrix(matrix, parentDiv, circRadius, heightWidth, interactive, c
   parentDiv.appendChild(matrixTable);
 }
 
+function buildUserHeader(headerDiv, userData, json) {
+  const userHeader = document.createElement('p');
+  userHeader.setAttribute('id', 'user');
+  userHeader.setAttribute('class', 'header-light');
+  userHeader.setAttribute('data-user-id', json.user.data.id);
+  userHeader.innerHTML = `${userData.username} |&nbsp;`;
+  headerDiv.appendChild(userHeader);
+}
+
+function buildLogououtLink(headerDiv) {
+  const logout = document.createElement('a');
+  logout.setAttribute('class', 'header-light');
+  logout.setAttribute('id', 'logout');
+  logout.setAttribute('href', '#');
+  logout.innerHTML = 'Logout';
+  logout.addEventListener('click', (e) => loginFormHandler(e));
+  headerDiv.appendChild(logout);
+}
+
+function buildExistingSeedsHeader(seedsDiv, userData) {
+  if (userData.seeds.length > 0) {
+    const seedExistingHeader = document.createElement('p');
+    seedExistingHeader.setAttribute('class', 'heavy');
+    seedExistingHeader.innerHTML = "<span class='red'>Choose</span> one of your visual seeds to send to the big screen.";
+    seedsDiv.appendChild(seedExistingHeader);
+  }
+}
+
+function alphabetizeSeeds(userData) {
+  // Alphabetize seeds
+  userData.seeds.sort((a, b) => {
+    if (a.name < b.name) {
+      return -1;
+    }
+    if (a.name > b.name) {
+      return 1;
+    }
+    // names must be equal
+    return 0;
+  });
+
+  return userData;
+}
+
+function buildSeeds(seedsDiv, userData) {
+  // First set up the rows
+  for (let i = 0; i < Math.ceil(userData.seeds.length / 2); i += 1) {
+    const seedRow = document.createElement('div');
+    seedRow.setAttribute('class', 'row');
+    seedRow.setAttribute('id', `row_${i}`);
+    seedsDiv.appendChild(seedRow);
+  }
+
+  // Then set up the seeds themselves
+  const alphaUserData = alphabetizeSeeds(userData);
+
+  for (let i = 0; i < alphaUserData.seeds.length; i += 1) {
+    const currentRow = document.getElementById(`row_${Math.floor(i / 2)}`);
+    const seedItem = document.createElement('div');
+    seedItem.setAttribute('class', 'col-sm-5 seedItem');
+
+    // Top spacer
+    const seedTop = document.createElement('p');
+    seedTop.setAttribute('class', 'label');
+    seedTop.innerHTML = ' ';
+    seedItem.appendChild(seedTop);
+
+    // Seed matrix
+    createMatrix(alphaUserData.seeds[i].matrix, seedItem, 4, 20, false, 5, 2);
+
+    // Seed name / button
+    const seedSubmitButton = document.createElement('button');
+    seedSubmitButton.setAttribute('id', alphaUserData.seeds[i].id);
+    seedSubmitButton.setAttribute('class', 'buttonPanel');
+    seedSubmitButton.textContent = alphaUserData.seeds[i].name;
+    seedSubmitButton.addEventListener('click', (e) => seedQueueHandler(e));
+    seedItem.appendChild(seedSubmitButton);
+
+    currentRow.appendChild(seedItem);
+  }
+}
+
 function userProfileFetch() {
   fetch(`${endPoint}profile`, {
     method: 'GET',
@@ -240,7 +325,6 @@ function userProfileFetch() {
     .then((json) => {
       if (json.message === 'Please log in') {
         localStorage.removeItem('jwt_token'); // to logout, everything handled on the frontend
-        // eslint-disable-next-line no-use-before-define
         buildPage();
       } else {
         const headerDiv = document.getElementById('header');
@@ -248,6 +332,9 @@ function userProfileFetch() {
 
         const userData = json.user.data.attributes;
 
+        buildUserHeader(headerDiv, userData, json);
+
+        /*
         // Add user name
         const userHeader = document.createElement('p');
         userHeader.setAttribute('id', 'user');
@@ -255,7 +342,11 @@ function userProfileFetch() {
         userHeader.setAttribute('data-user-id', json.user.data.id);
         userHeader.innerHTML = `${userData.username} |&nbsp;`;
         headerDiv.appendChild(userHeader);
+        */
 
+        buildLogououtLink(headerDiv);
+
+        /*
         // Add logout link
         const logout = document.createElement('a');
         logout.setAttribute('class', 'header-light');
@@ -264,7 +355,11 @@ function userProfileFetch() {
         logout.innerHTML = 'Logout';
         logout.addEventListener('click', (e) => loginFormHandler(e));
         headerDiv.appendChild(logout);
+        */
 
+        buildExistingSeedsHeader(seedsDiv, userData);
+
+        /*
         // Existing seeds header
         if (userData.seeds.length > 0) {
           const seedExistingHeader = document.createElement('p');
@@ -272,7 +367,11 @@ function userProfileFetch() {
           seedExistingHeader.innerHTML = "<span class='red'>Choose</span> one of your visual seeds to send to the big screen.";
           seedsDiv.appendChild(seedExistingHeader);
         }
+        */
 
+        buildSeeds(seedsDiv, userData);
+
+        /*
         // Seeds DIVs
 
         // First set up the rows
@@ -321,6 +420,7 @@ function userProfileFetch() {
 
           currentRow.appendChild(seedItem);
         }
+        */
       }
     });
 }

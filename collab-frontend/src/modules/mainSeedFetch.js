@@ -2,7 +2,7 @@
 import CellEcosystem from './CellEcosystem.js';
 import Seed from './Seed.js';
 
-function nowplayingFetch(id) {
+function nowplayingFetch(id, endPoint) {
   const bodyData = { playlist: { id } };
 
   fetch(`${endPoint}nowplaying`, {
@@ -19,7 +19,7 @@ function nowplayingFetch(id) {
     });
 }
 
-function playlistFetch() {
+function playlistFetch(endPoint) {
   fetch(`${endPoint}playlists`, {
     method: 'GET',
     headers: {
