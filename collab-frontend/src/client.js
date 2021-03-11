@@ -3,122 +3,37 @@ const endPoint = 'http://collabvisuals.ngrok.io/api/v1/';
 
 const main = document.getElementsByTagName('main');
 
+function buildPage() {
+  clear();
 
-function playlistFetch(seed_id, name) {
-  const bodyData = { playlist: { seed_id } };
+  if (localStorage.getItem('jwt_token') != undefined) {
+    // Already logged in
 
-  fetch(`${endPoint}playlists`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
-    },
-    body: JSON.stringify(bodyData),
-  })
-    .then((response) => response.json())
-    .then(() => {
-      const alertsLabel = document.getElementById('alertsLabel');
-      alertsLabel.innerHTML = `Seed <span class='orange'>${name}</span> added to playlist`;
-    });
-}
+    userProfileFetch();
 
-function loginFetch(username, password) {
-  const bodyData = { user: { username, password } };
+    const seedsDiv = document.createElement('div');
+    seedsDiv.setAttribute('id', 'seeds');
 
-  fetch(`${endPoint}login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(bodyData),
-  })
-    .then((response) => response.json())
-    .then((json) => {
-      localStorage.setItem('jwt_token', json.jwt);
-      buildPage();
-    });
-}
+    buildSeedHeader(seedsDiv);
+    buildAlert(seedsDiv);
+    createMatrix('0000000000000000', seedsDiv, 20, 48, true, 25, 5);
+    const seedSubmitButton = buildSeedForm(seedsDiv);
 
-function createUserFetch(username, password, admin) {
-  const bodyData = { user: { username, password, admin } };
+    main[0].appendChild(seedsDiv);
 
-  fetch(`${endPoint}users`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(bodyData),
-  })
-    .then((response) => response.json())
-    .then((json) => {
-      localStorage.setItem('jwt_token', json.jwt);
-      buildPage();
-    });
-}
+    seedSubmitButton.addEventListener('click', (e) => seedFormHandler(e));
+  } else {
+    // Not logged in
+    const loginDiv = document.createElement('div');
+    loginDiv.setAttribute('id', 'login');
 
-function createSeedFetch(name, matrix) {
-  const userInfo = document.getElementById('user');
-  const user_id = userInfo.getAttribute('data-user-id');
-  const bodyData = { seed: { name, matrix, user_id } };
+    const createLink = buildLoginHeader(loginDiv);
+    buildLoginAlert(loginDiv);
+    const loginButton = buildLoginForm(loginDiv);
 
-  fetch(`${endPoint}seeds`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
-    },
-    body: JSON.stringify(bodyData),
-  })
-    .then((response) => response.json())
-    .then(() => {
-      buildPage();
-    });
-}
-
-function nowPlayingFetch() {
-  fetch(`${endPoint}nowplaying`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
-    },
-  })
-    .then((response) => response.json())
-    .then((json) => {
-      if (!json.errors) {
-        const alertsLabel = document.getElementById('alertsLabel');
-        const user = document.getElementById('user');
-        const nowPlayingData = json.seed.data;
-
-        if (user.getAttribute('data-user-id') === nowPlayingData.relationships.user.data.id) {
-          alertsLabel.innerHTML = `Your seed <span class='orange'>${nowPlayingData.attributes.name}</span> is now playing`;
-        } else {
-          alertsLabel.innerHTML = '&nbsp;<br>';
-        }
-      }
-    });
-}
-
-
-function seedFormHandler(e) {
-  let errorMsg = '';
-  const nameInput = document.getElementById('nameField').value;
-  let matrixInput = '';
-
-  if (nameInput.length < 6) {
-    errorMsg += "Name must be at least <span class='orange'>6 characters</span> long.";
-    const alertsLabel = document.getElementById('alertsLabel');
-    alertsLabel.innerHTML = errorMsg;
-    return;
+    createLink.addEventListener('click', (e) => loginFormHandler(e));
+    loginButton.addEventListener('click', (e) => loginFormHandler(e));
   }
-  // Get seed definition from matrix
-
-  for (let i = 0; i < 16; i += 1) {
-    const currentCell = document.getElementById(`cell_${i}`);
-    if (currentCell.getAttribute('class').split(' ')[0] === 'unselected') {
-      matrixInput += '0';
-    } else if (currentCell.getAttribute('class').split(' ')[0] === 'selected') {
-      matrixInput += '1';
-    }
-  }
-
-  // Submit to backend
-  createSeedFetch(nameInput, matrixInput);
 }
 
 function createAccountForm() {
@@ -145,58 +60,9 @@ function createAccountForm() {
   loginButton.textContent = 'Create';
 }
 
-function checkLoginInput(e) {
-  // Check input fields
-  let errorMsg = '';
-  const usernameInput = document.getElementById('usernameField').value;
-  const pwInput = document.getElementById('passwordField').value;
-
-  if ((usernameInput.length < 4) || (pwInput.length < 6)) {
-    if (usernameInput.length < 4) {
-      errorMsg += "Username must be at least <span class='orange'>4 characters</span> long.<br>";
-    }
-    if (pwInput.length < 6) {
-      errorMsg += "Password must be at least <span class='orange'>6 characters</span> long.";
-    }
-    const alertsLabel = document.getElementById('alertsLabel');
-    alertsLabel.innerHTML = errorMsg;
-  }
-
-  // Submit to backend if no errors
-  if (errorMsg === '') {
-    if (e.srcElement.textContent === 'Login') {
-      loginFetch(usernameInput, pwInput);
-      //return;
-    }
-
-    const adminInput = document.getElementById('adminField').checked;
-    createUserFetch(usernameInput, pwInput, adminInput);
-  }
-}
-
-function loginFormHandler(e) {
-  if (e.srcElement.id === 'logout') {
-    localStorage.removeItem('jwt_token'); // logout
-    buildPage();
-  } else if (e.srcElement.className === 'red') {
-    createAccountForm();
-  } else {
-    checkLoginInput(e);
-  }
-}
-
-function seedQueueHandler(e) {
-  e.srcElement.innerHTML = 'Added';
-  playlistFetch(e.srcElement.getAttribute('id'), e.srcElement.textContent);
-}
-
-function circ(selected, circRadius, heightWidth, center, thickness) {
-  if (selected === true) {
-    return `<svg height='${heightWidth}' width='${heightWidth}'><circle class='selected' cx='${center}' cy='${center}' r='${circRadius}' stroke='white' stroke-width='${thickness}' fill='white' /></svg>`;
-  }
-  return `<svg height='${heightWidth}' width='${heightWidth}'><circle class='unselected' cx='${center}' cy='${center}' r='${circRadius}' stroke='white' stroke-width='${thickness}' fill='#222' /></svg>`;
-}
-
+//
+// Build helpers
+//
 function matrixManager(e) {
   const parentDiv = e.srcElement.parentElement.parentElement;
   const parentClass = parentDiv.getAttribute('class').split(' ');
@@ -226,7 +92,6 @@ function createMatrix(matrix, parentDiv, circRadius, heightWidth, interactive, c
       cell.innerHTML = circ(false, circRadius, heightWidth, center, thickness);
     }
     if (interactive === true) {
-      // Add event listeners
       cell.addEventListener('click', (e) => matrixManager(e));
     }
     matrixTable.appendChild(cell);
@@ -317,30 +182,11 @@ function buildSeeds(seedsDiv, userData) {
   }
 }
 
-function userProfileFetch() {
-  fetch(`${endPoint}profile`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
-    },
-  })
-    .then((response) => response.json())
-    .then((json) => {
-      if (json.message === 'Please log in') {
-        localStorage.removeItem('jwt_token'); // to logout, everything handled on the frontend
-        buildPage();
-      } else {
-        const headerDiv = document.getElementById('header');
-        const seedsDiv = document.getElementById('seeds');
-
-        const userData = json.user.data.attributes;
-
-        buildUserHeader(headerDiv, userData, json);
-        buildLogououtLink(headerDiv);
-        buildExistingSeedsHeader(seedsDiv, userData);
-        buildSeeds(seedsDiv, userData);
-      }
-    });
+function circ(selected, circRadius, heightWidth, center, thickness) {
+  if (selected === true) {
+    return `<svg height='${heightWidth}' width='${heightWidth}'><circle class='selected' cx='${center}' cy='${center}' r='${circRadius}' stroke='white' stroke-width='${thickness}' fill='white' /></svg>`;
+  }
+  return `<svg height='${heightWidth}' width='${heightWidth}'><circle class='unselected' cx='${center}' cy='${center}' r='${circRadius}' stroke='white' stroke-width='${thickness}' fill='#222' /></svg>`;
 }
 
 function clear() {
@@ -448,42 +294,199 @@ function buildLoginForm(loginDiv) {
   return loginButton;
 }
 
-function buildPage() {
-  clear();
+//
+// Fetches
+//
+function userProfileFetch() {
+  fetch(`${endPoint}profile`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
+    },
+  })
+    .then((response) => response.json())
+    .then((json) => {
+      if (json.message === 'Please log in') {
+        localStorage.removeItem('jwt_token'); // logout
+        buildPage();
+      } else {
+        const headerDiv = document.getElementById('header');
+        const seedsDiv = document.getElementById('seeds');
 
-  if (localStorage.getItem('jwt_token') != undefined) {
-    // Already logged in
+        const userData = json.user.data.attributes;
 
-    // Greet user, show their existing seeds
-    userProfileFetch();
+        buildUserHeader(headerDiv, userData, json);
+        buildLogououtLink(headerDiv);
+        buildExistingSeedsHeader(seedsDiv, userData);
+        buildSeeds(seedsDiv, userData);
+      }
+    });
+}
 
-    // Build form to submit new seeds
-    const seedsDiv = document.createElement('div');
-    seedsDiv.setAttribute('id', 'seeds');
+function playlistFetch(seed_id, name) {
+  const bodyData = { playlist: { seed_id } };
 
-    buildSeedHeader(seedsDiv);
-    buildAlert(seedsDiv);
-    createMatrix('0000000000000000', seedsDiv, 20, 48, true, 25, 5);
-    const seedSubmitButton = buildSeedForm(seedsDiv);
+  fetch(`${endPoint}playlists`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
+    },
+    body: JSON.stringify(bodyData),
+  })
+    .then((response) => response.json())
+    .then(() => {
+      const alertsLabel = document.getElementById('alertsLabel');
+      alertsLabel.innerHTML = `Seed <span class='orange'>${name}</span> added to playlist`;
+    });
+}
 
-    main[0].appendChild(seedsDiv);
+function loginFetch(username, password) {
+  const bodyData = { user: { username, password } };
 
-    // Add event listeners
-    seedSubmitButton.addEventListener('click', (e) => seedFormHandler(e));
-  } else {
-    // Not logged in: need to login / create account
-    const loginDiv = document.createElement('div');
-    loginDiv.setAttribute('id', 'login');
+  fetch(`${endPoint}login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(bodyData),
+  })
+    .then((response) => response.json())
+    .then((json) => {
+      localStorage.setItem('jwt_token', json.jwt);
+      buildPage();
+    });
+}
 
-    const createLink = buildLoginHeader(loginDiv);
-    buildLoginAlert(loginDiv);
-    const loginButton = buildLoginForm(loginDiv);
+function createUserFetch(username, password, admin) {
+  const bodyData = { user: { username, password, admin } };
 
-    // Add event listeners
-    createLink.addEventListener('click', (e) => loginFormHandler(e));
-    loginButton.addEventListener('click', (e) => loginFormHandler(e));
+  fetch(`${endPoint}users`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(bodyData),
+  })
+    .then((response) => response.json())
+    .then((json) => {
+      localStorage.setItem('jwt_token', json.jwt);
+      buildPage();
+    });
+}
+
+function createSeedFetch(name, matrix) {
+  const userInfo = document.getElementById('user');
+  const user_id = userInfo.getAttribute('data-user-id');
+  const bodyData = { seed: { name, matrix, user_id } };
+
+  fetch(`${endPoint}seeds`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
+    },
+    body: JSON.stringify(bodyData),
+  })
+    .then((response) => response.json())
+    .then(() => {
+      buildPage();
+    });
+}
+
+function nowPlayingFetch() {
+  fetch(`${endPoint}nowplaying`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
+    },
+  })
+    .then((response) => response.json())
+    .then((json) => {
+      if (!json.errors) {
+        const alertsLabel = document.getElementById('alertsLabel');
+        const user = document.getElementById('user');
+        const nowPlayingData = json.seed.data;
+
+        if (user.getAttribute('data-user-id') === nowPlayingData.relationships.user.data.id) {
+          alertsLabel.innerHTML = `Your seed <span class='orange'>${nowPlayingData.attributes.name}</span> is now playing`;
+        } else {
+          alertsLabel.innerHTML = '&nbsp;<br>';
+        }
+      }
+    });
+}
+
+//
+// Form handlers
+//
+function seedFormHandler(e) {
+  let errorMsg = '';
+  const nameInput = document.getElementById('nameField').value;
+  let matrixInput = '';
+
+  if (nameInput.length < 6) {
+    errorMsg += "Name must be at least <span class='orange'>6 characters</span> long.";
+    const alertsLabel = document.getElementById('alertsLabel');
+    alertsLabel.innerHTML = errorMsg;
+    return;
+  }
+
+  // Get seed definition from matrix
+  for (let i = 0; i < 16; i += 1) {
+    const currentCell = document.getElementById(`cell_${i}`);
+    if (currentCell.getAttribute('class').split(' ')[0] === 'unselected') {
+      matrixInput += '0';
+    } else if (currentCell.getAttribute('class').split(' ')[0] === 'selected') {
+      matrixInput += '1';
+    }
+  }
+
+  createSeedFetch(nameInput, matrixInput);
+}
+
+function checkLoginInput(e) {
+  let errorMsg = '';
+  const usernameInput = document.getElementById('usernameField').value;
+  const pwInput = document.getElementById('passwordField').value;
+
+  if ((usernameInput.length < 4) || (pwInput.length < 6)) {
+    if (usernameInput.length < 4) {
+      errorMsg += "Username must be at least <span class='orange'>4 characters</span> long.<br>";
+    }
+    if (pwInput.length < 6) {
+      errorMsg += "Password must be at least <span class='orange'>6 characters</span> long.";
+    }
+    const alertsLabel = document.getElementById('alertsLabel');
+    alertsLabel.innerHTML = errorMsg;
+  }
+
+  // Submit to backend if no errors
+  if (errorMsg === '') {
+    if (e.srcElement.textContent === 'Login') {
+      loginFetch(usernameInput, pwInput);
+    }
+
+    const adminInput = document.getElementById('adminField').checked;
+    createUserFetch(usernameInput, pwInput, adminInput);
   }
 }
+
+function loginFormHandler(e) {
+  if (e.srcElement.id === 'logout') {
+    localStorage.removeItem('jwt_token'); // logout
+    buildPage();
+  } else if (e.srcElement.className === 'red') {
+    createAccountForm();
+  } else {
+    checkLoginInput(e);
+  }
+}
+
+function seedQueueHandler(e) {
+  e.srcElement.innerHTML = 'Added';
+  playlistFetch(e.srcElement.getAttribute('id'), e.srcElement.textContent);
+}
+
+//
+// Timed actions
+//
 
 function nowPlaying() {
   if (localStorage.getItem('jwt_token') != undefined) {
@@ -492,7 +495,6 @@ function nowPlaying() {
   }
 }
 
-// Timed actions
 const nowPlayingVar = setInterval(nowPlaying, 1000); // Interval to check which seed is playing
 
 document.addEventListener('DOMContentLoaded', () => {
