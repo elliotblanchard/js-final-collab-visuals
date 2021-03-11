@@ -162,13 +162,16 @@ function checkLoginInput(e) {
     alertsLabel.innerHTML = errorMsg;
   }
 
-  // Submit to backend
-  if (e.srcElement.textContent === 'Login') {
-    loginFetch(usernameInput, pwInput);
-    return;
+  // Submit to backend if no errors
+  if (errorMsg === '') {
+    if (e.srcElement.textContent === 'Login') {
+      loginFetch(usernameInput, pwInput);
+      //return;
+    }
+
+    const adminInput = document.getElementById('adminField').checked;
+    createUserFetch(usernameInput, pwInput, adminInput);
   }
-  const adminInput = document.getElementById('adminField').checked;
-  createUserFetch(usernameInput, pwInput, adminInput);
 }
 
 function loginFormHandler(e) {
@@ -333,94 +336,9 @@ function userProfileFetch() {
         const userData = json.user.data.attributes;
 
         buildUserHeader(headerDiv, userData, json);
-
-        /*
-        // Add user name
-        const userHeader = document.createElement('p');
-        userHeader.setAttribute('id', 'user');
-        userHeader.setAttribute('class', 'header-light');
-        userHeader.setAttribute('data-user-id', json.user.data.id);
-        userHeader.innerHTML = `${userData.username} |&nbsp;`;
-        headerDiv.appendChild(userHeader);
-        */
-
         buildLogououtLink(headerDiv);
-
-        /*
-        // Add logout link
-        const logout = document.createElement('a');
-        logout.setAttribute('class', 'header-light');
-        logout.setAttribute('id', 'logout');
-        logout.setAttribute('href', '#');
-        logout.innerHTML = 'Logout';
-        logout.addEventListener('click', (e) => loginFormHandler(e));
-        headerDiv.appendChild(logout);
-        */
-
         buildExistingSeedsHeader(seedsDiv, userData);
-
-        /*
-        // Existing seeds header
-        if (userData.seeds.length > 0) {
-          const seedExistingHeader = document.createElement('p');
-          seedExistingHeader.setAttribute('class', 'heavy');
-          seedExistingHeader.innerHTML = "<span class='red'>Choose</span> one of your visual seeds to send to the big screen.";
-          seedsDiv.appendChild(seedExistingHeader);
-        }
-        */
-
         buildSeeds(seedsDiv, userData);
-
-        /*
-        // Seeds DIVs
-
-        // First set up the rows
-        for (let i = 0; i < Math.ceil(userData.seeds.length / 2); i += 1) {
-          const seedRow = document.createElement('div');
-          seedRow.setAttribute('class', 'row');
-          seedRow.setAttribute('id', `row_${i}`);
-          seedsDiv.appendChild(seedRow);
-        }
-
-        // Then set up the seeds themselves
-        // Alphabetize seeds
-        userData.seeds.sort((a, b) => {
-          if (a.name < b.name) {
-            return -1;
-          }
-          if (a.name > b.name) {
-            return 1;
-          }
-          // names must be equal
-          return 0;
-        });
-
-        for (let i = 0; i < userData.seeds.length; i += 1) {
-          const currentRow = document.getElementById(`row_${Math.floor(i / 2)}`);
-          const seedItem = document.createElement('div');
-          seedItem.setAttribute('class', 'col-sm-5 seedItem');
-          // seedItem.setAttribute("id", userData.seeds[i].id)
-
-          // Top spacer
-          const seedTop = document.createElement('p');
-          seedTop.setAttribute('class', 'label');
-          seedTop.innerHTML = ' ';
-          seedItem.appendChild(seedTop);
-
-          // Seed matrix
-          createMatrix(userData.seeds[i].matrix, seedItem, 4, 20, false, 5, 2);
-
-          // Seed name / button
-          const seedSubmitButton = document.createElement('button');
-          seedSubmitButton.setAttribute('id', userData.seeds[i].id);
-          seedSubmitButton.setAttribute('class', 'buttonPanel');
-          seedSubmitButton.textContent = userData.seeds[i].name;
-          seedSubmitButton.addEventListener('click', (e) => seedQueueHandler(e));
-          seedItem.appendChild(seedSubmitButton);
-
-          currentRow.appendChild(seedItem);
-        }
-        */
       }
     });
 }
@@ -431,10 +349,108 @@ function clear() {
   main[0].innerHTML = '';
 }
 
+function buildSeedHeader(seedsDiv) {
+  const seedHeader = document.createElement('p');
+  seedHeader.setAttribute('class', 'heavy');
+  seedHeader.innerHTML = "Create a <span class='red'>visual seed</span> to drive the big screen.";
+  seedsDiv.appendChild(seedHeader);
+}
+
+function buildAlert(seedsDiv) {
+  const alertsDiv = document.createElement('div');
+  alertsDiv.setAttribute('id', 'alerts');
+  const alertsLabel = document.createElement('p');
+  alertsLabel.setAttribute('id', 'alertsLabel');
+  alertsLabel.innerHTML = '&nbsp;<br>';
+  alertsDiv.appendChild(alertsLabel);
+  seedsDiv.appendChild(alertsDiv);
+}
+
+function buildSeedForm(seedsDiv) {
+  const nameLabel = document.createElement('p');
+  nameLabel.setAttribute('class', 'label');
+  nameLabel.textContent = 'Seed Name';
+  seedsDiv.appendChild(nameLabel);
+  const name = document.createElement('INPUT');
+  name.setAttribute('type', 'text');
+  name.setAttribute('class', 'input');
+  name.setAttribute('id', 'nameField');
+  seedsDiv.appendChild(name);
+
+  const seedSubmitButton = document.createElement('button');
+  seedSubmitButton.setAttribute('id', 'seedSubmitBtn');
+  seedSubmitButton.setAttribute('class', 'button');
+  seedSubmitButton.textContent = 'Submit';
+  seedsDiv.appendChild(seedSubmitButton);
+
+  const lineBreak = document.createElement('br');
+  seedsDiv.appendChild(lineBreak);
+  seedsDiv.appendChild(lineBreak);
+
+  const bar = document.createElement('img');
+  bar.setAttribute('src', 'img/bar.png');
+  seedsDiv.appendChild(bar);
+
+  return seedSubmitButton;
+}
+
+function buildLoginHeader(loginDiv) {
+  const loginHeader = document.createElement('p');
+  loginHeader.setAttribute('class', 'heavy');
+  loginHeader.innerHTML = 'Please login<br>or ';
+  loginDiv.appendChild(loginHeader);
+  const createLink = document.createElement('a');
+  createLink.setAttribute('id', 'createLink');
+  createLink.setAttribute('href', '#');
+  createLink.innerHTML = "<span class='red'>create an account.</span>";
+  loginHeader.appendChild(createLink);
+
+  return createLink;
+}
+
+function buildLoginAlert(loginDiv) {
+  const alertsDiv = document.createElement('div');
+  alertsDiv.setAttribute('id', 'alerts');
+  const alertsLabel = document.createElement('p');
+  alertsLabel.setAttribute('id', 'alertsLabel');
+  alertsLabel.textContent = '';
+  alertsDiv.appendChild(alertsLabel);
+  loginDiv.appendChild(alertsDiv);
+}
+
+function buildLoginForm(loginDiv) {
+  const usernameLabel = document.createElement('p');
+  usernameLabel.setAttribute('class', 'label');
+  usernameLabel.textContent = 'Username';
+  loginDiv.appendChild(usernameLabel);
+  const username = document.createElement('INPUT');
+  username.setAttribute('type', 'text');
+  username.setAttribute('id', 'usernameField');
+  username.setAttribute('class', 'input');
+  loginDiv.appendChild(username);
+  const passwordLabel = document.createElement('p');
+  passwordLabel.setAttribute('class', 'label');
+  passwordLabel.textContent = 'Password';
+  loginDiv.appendChild(passwordLabel);
+  const password = document.createElement('INPUT');
+  password.setAttribute('class', 'input');
+  password.setAttribute('type', 'password');
+  password.setAttribute('id', 'passwordField');
+  loginDiv.appendChild(password);
+  const loginButton = document.createElement('button');
+  loginButton.setAttribute('class', 'button');
+  loginButton.setAttribute('type', 'submit');
+  loginButton.setAttribute('id', 'loginBtn');
+  loginButton.textContent = 'Login';
+  loginDiv.appendChild(loginButton);
+  main[0].appendChild(loginDiv);
+
+  return loginButton;
+}
+
 function buildPage() {
   clear();
 
-  // eslint-disable-next-line eqeqeq
   if (localStorage.getItem('jwt_token') != undefined) {
     // Already logged in
 
@@ -445,46 +461,10 @@ function buildPage() {
     const seedsDiv = document.createElement('div');
     seedsDiv.setAttribute('id', 'seeds');
 
-    const seedHeader = document.createElement('p');
-    seedHeader.setAttribute('class', 'heavy');
-    seedHeader.innerHTML = "Create a <span class='red'>visual seed</span> to drive the big screen.";
-    seedsDiv.appendChild(seedHeader);
-
-    // Build alert DIV
-    const alertsDiv = document.createElement('div');
-    alertsDiv.setAttribute('id', 'alerts');
-    const alertsLabel = document.createElement('p');
-    alertsLabel.setAttribute('id', 'alertsLabel');
-    alertsLabel.innerHTML = '&nbsp;<br>';
-    alertsDiv.appendChild(alertsLabel);
-    seedsDiv.appendChild(alertsDiv);
-
-    // Build matrix
+    buildSeedHeader(seedsDiv);
+    buildAlert(seedsDiv);
     createMatrix('0000000000000000', seedsDiv, 20, 48, true, 25, 5);
-
-    const nameLabel = document.createElement('p');
-    nameLabel.setAttribute('class', 'label');
-    nameLabel.textContent = 'Seed Name';
-    seedsDiv.appendChild(nameLabel);
-    const name = document.createElement('INPUT');
-    name.setAttribute('type', 'text');
-    name.setAttribute('class', 'input');
-    name.setAttribute('id', 'nameField');
-    seedsDiv.appendChild(name);
-
-    const seedSubmitButton = document.createElement('button');
-    seedSubmitButton.setAttribute('id', 'seedSubmitBtn');
-    seedSubmitButton.setAttribute('class', 'button');
-    seedSubmitButton.textContent = 'Submit';
-    seedsDiv.appendChild(seedSubmitButton);
-
-    const lineBreak = document.createElement('br');
-    seedsDiv.appendChild(lineBreak);
-    seedsDiv.appendChild(lineBreak);
-
-    const bar = document.createElement('img');
-    bar.setAttribute('src', 'img/bar.png');
-    seedsDiv.appendChild(bar);
+    const seedSubmitButton = buildSeedForm(seedsDiv);
 
     main[0].appendChild(seedsDiv);
 
@@ -494,50 +474,10 @@ function buildPage() {
     // Not logged in: need to login / create account
     const loginDiv = document.createElement('div');
     loginDiv.setAttribute('id', 'login');
-    const loginHeader = document.createElement('p');
-    loginHeader.setAttribute('class', 'heavy');
-    loginHeader.innerHTML = 'Please login<br>or ';
-    loginDiv.appendChild(loginHeader);
-    const createLink = document.createElement('a');
-    createLink.setAttribute('id', 'createLink');
-    createLink.setAttribute('href', '#');
-    createLink.innerHTML = "<span class='red'>create an account.</span>";
-    loginHeader.appendChild(createLink);
 
-    // Build alert DIV
-    const alertsDiv = document.createElement('div');
-    alertsDiv.setAttribute('id', 'alerts');
-    const alertsLabel = document.createElement('p');
-    alertsLabel.setAttribute('id', 'alertsLabel');
-    alertsLabel.textContent = '';
-    alertsDiv.appendChild(alertsLabel);
-    loginDiv.appendChild(alertsDiv);
-
-    const usernameLabel = document.createElement('p');
-    usernameLabel.setAttribute('class', 'label');
-    usernameLabel.textContent = 'Username';
-    loginDiv.appendChild(usernameLabel);
-    const username = document.createElement('INPUT');
-    username.setAttribute('type', 'text');
-    username.setAttribute('id', 'usernameField');
-    username.setAttribute('class', 'input');
-    loginDiv.appendChild(username);
-    const passwordLabel = document.createElement('p');
-    passwordLabel.setAttribute('class', 'label');
-    passwordLabel.textContent = 'Password';
-    loginDiv.appendChild(passwordLabel);
-    const password = document.createElement('INPUT');
-    password.setAttribute('class', 'input');
-    password.setAttribute('type', 'password');
-    password.setAttribute('id', 'passwordField');
-    loginDiv.appendChild(password);
-    const loginButton = document.createElement('button');
-    loginButton.setAttribute('class', 'button');
-    loginButton.setAttribute('type', 'submit');
-    loginButton.setAttribute('id', 'loginBtn');
-    loginButton.textContent = 'Login';
-    loginDiv.appendChild(loginButton);
-    main[0].appendChild(loginDiv);
+    const createLink = buildLoginHeader(loginDiv);
+    buildLoginAlert(loginDiv);
+    const loginButton = buildLoginForm(loginDiv);
 
     // Add event listeners
     createLink.addEventListener('click', (e) => loginFormHandler(e));
