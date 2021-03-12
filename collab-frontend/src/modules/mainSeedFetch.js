@@ -2,7 +2,9 @@
 import CellEcosystem from './CellEcosystem.js';
 import Seed from './Seed.js';
 
-function nowplayingFetch(id, endPoint) {
+const endPoint = 'http://collabvisuals.ngrok.io/api/v1/';
+
+function nowplayingFetch(id) {
   const bodyData = { playlist: { id } };
 
   fetch(`${endPoint}nowplaying`, {
@@ -19,7 +21,7 @@ function nowplayingFetch(id, endPoint) {
     });
 }
 
-function playlistFetch(endPoint) {
+function playlistFetch() {
   fetch(`${endPoint}playlists`, {
     method: 'GET',
     headers: {
@@ -39,7 +41,6 @@ function playlistFetch(endPoint) {
       );
       CellEcosystem.cellEcosystem.setSeed(newSeed);
 
-      // Set playlist.now_playing = seed_id (needs new route) (also destroys seed from playlist)
       nowplayingFetch(json.playlist.data[0].id);
     });
 }
