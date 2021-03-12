@@ -461,10 +461,10 @@ function checkLoginInput(e) {
   if (errorMsg === '') {
     if (e.srcElement.textContent === 'Login') {
       loginFetch(usernameInput, pwInput);
+    } else {
+      const adminInput = document.getElementById('adminField').checked;
+      createUserFetch(usernameInput, pwInput, adminInput);
     }
-
-    const adminInput = document.getElementById('adminField').checked;
-    createUserFetch(usernameInput, pwInput, adminInput);
   }
 }
 
